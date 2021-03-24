@@ -26,6 +26,8 @@ typedef enum {
   PIX_FMT_BGR888,
   PIX_FMT_ARGB8888,
   PIX_FMT_ABGR8888,
+  PIX_FMT_RGBA8888,
+  PIX_FMT_BGRA8888,
   // Compound type
   PIX_FMT_FBC0,
   PIX_FMT_FBC2,

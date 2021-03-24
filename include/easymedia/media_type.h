@@ -41,6 +41,8 @@ enum class Type { None = -1, Audio = 0, Image, Video, Text };
 #define IMAGE_BGR888 "image:bgr888"
 #define IMAGE_ARGB8888 "image:argb8888"
 #define IMAGE_ABGR8888 "image:abgr8888"
+#define IMAGE_RGBA8888 "image:rgba8888"
+#define IMAGE_BGRA8888 "image:bgra8888"
 
 #define IMAGE_JPEG "image:jpeg"
 

@@ -51,6 +51,10 @@ std::string ImageTypeToString(IMAGE_TYPE_E type) {
     return IMAGE_ARGB8888;
   case IMAGE_TYPE_ABGR8888:
     return IMAGE_ABGR8888;
+  case IMAGE_TYPE_RGBA8888:
+    return IMAGE_RGBA8888;
+  case IMAGE_TYPE_BGRA8888:
+    return IMAGE_BGRA8888;
   case IMAGE_TYPE_JPEG:
     return IMAGE_JPEG;
   default:
@@ -102,6 +106,10 @@ IMAGE_TYPE_E StringToImageType(std::string type) {
     return IMAGE_TYPE_ARGB8888;
   else if (type == IMAGE_ABGR8888)
     return IMAGE_TYPE_ABGR8888;
+  else if (type == IMAGE_RGBA8888)
+    return IMAGE_TYPE_RGBA8888;
+  else if (type == IMAGE_BGRA8888)
+    return IMAGE_TYPE_BGRA8888;
   else if (type == IMAGE_JPEG)
     return IMAGE_TYPE_JPEG;
   else

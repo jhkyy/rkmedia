@@ -25,7 +25,8 @@ MppFrameFormat ConvertToMppPixFmt(const PixelFormat &fmt) {
        [PIX_FMT_RGB332] = (MppFrameFormat)-1, [PIX_FMT_RGB565] = MPP_FMT_RGB565,
        [PIX_FMT_BGR565] = MPP_FMT_BGR565, [PIX_FMT_RGB888] = MPP_FMT_RGB888,
        [PIX_FMT_BGR888] = MPP_FMT_BGR888, [PIX_FMT_ARGB8888] = MPP_FMT_ARGB8888,
-       [PIX_FMT_ABGR8888] = MPP_FMT_ABGR8888,
+       [PIX_FMT_ABGR8888] = MPP_FMT_ABGR8888, [PIX_FMT_RGBA8888] = MPP_FMT_RGBA8888,
+       [PIX_FMT_BGRA8888] = MPP_FMT_BGRA8888,
        [PIX_FMT_FBC0] =
            (MppFrameFormat)(MPP_FMT_YUV420SP | MPP_FRAME_FBC_AFBC_V1),
        [PIX_FMT_FBC2] =
@@ -65,6 +66,10 @@ PixelFormat ConvertToPixFmt(const MppFrameFormat &mfmt) {
     return PIX_FMT_ARGB8888;
   case MPP_FMT_ABGR8888:
     return PIX_FMT_ABGR8888;
+  case MPP_FMT_RGBA8888:
+    return PIX_FMT_RGBA8888;
+  case MPP_FMT_BGRA8888:
+    return PIX_FMT_BGRA8888;
   default:
     RKMEDIA_LOGI("unsupport for mpp pixel fmt: %d\n", mfmt);
     return PIX_FMT_NONE;
@@ -88,6 +93,8 @@ public:
     types.append(TYPENEAR(IMAGE_BGR888));
     types.append(TYPENEAR(IMAGE_ARGB8888));
     types.append(TYPENEAR(IMAGE_ABGR8888));
+    types.append(TYPENEAR(IMAGE_RGBA8888));
+    types.append(TYPENEAR(IMAGE_BGRA8888));
     types.append(TYPENEAR(IMAGE_FBC0));
     types.append(TYPENEAR(IMAGE_FBC2));
   }
