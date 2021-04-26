@@ -2439,6 +2439,7 @@ static RK_S32 RkmediaCreateJpegSnapPipeline(RkmediaChannel *VenChn) {
   RK_S32 s32ZoomHeight = 0;
   RK_S32 s32ZoomVirWidth = 0;
   RK_S32 s32ZoomVirHeight = 0;
+  RK_BOOL bSupportDcf = RK_FALSE;
   const RK_CHAR *pcRkmediaRcMode = nullptr;
   const RK_CHAR *pcRkmediaCodecType = nullptr;
   VENC_CHN_ATTR_S *stVencChnAttr = &VenChn->venc_attr.attr;
@@ -2505,6 +2506,7 @@ static RK_S32 RkmediaCreateJpegSnapPipeline(RkmediaChannel *VenChn) {
     s32ZoomHeight = stVencChnAttr->stVencAttr.stAttrJpege.u32ZoomHeight;
     s32ZoomVirWidth = stVencChnAttr->stVencAttr.stAttrJpege.u32ZoomVirWidth;
     s32ZoomVirHeight = stVencChnAttr->stVencAttr.stAttrJpege.u32ZoomVirHeight;
+    bSupportDcf = stVencChnAttr->stVencAttr.stAttrJpege.bSupportDCF;
   }
 
   std::string flow_name = "video_enc";
@@ -2673,6 +2675,34 @@ static RK_S32 RkmediaCreateJpegSnapPipeline(RkmediaChannel *VenChn) {
   } else {
     // JPEG
     PARAM_STRING_APPEND_TO(enc_param, KEY_JPEG_QFACTOR, 50);
+
+    PARAM_STRING_APPEND_TO(enc_param, KEY_ENABLE_JPEG_DCF, bSupportDcf);
+    if (stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum >
+        0) {
+      PARAM_STRING_APPEND_TO(
+          enc_param, KEY_JPEG_MPF_CNT,
+          stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum);
+      PARAM_STRING_APPEND_TO(enc_param, KEY_JPEG_MPF0_W,
+                             stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg
+                                 .astLargeThumbNailSize[0]
+                                 .u32Width);
+      PARAM_STRING_APPEND_TO(enc_param, KEY_JPEG_MPF0_H,
+                             stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg
+                                 .astLargeThumbNailSize[0]
+                                 .u32Height);
+    }
+
+    if (stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum >
+        1) {
+      PARAM_STRING_APPEND_TO(enc_param, KEY_JPEG_MPF1_W,
+                             stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg
+                                 .astLargeThumbNailSize[1]
+                                 .u32Width);
+      PARAM_STRING_APPEND_TO(enc_param, KEY_JPEG_MPF1_H,
+                             stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg
+                                 .astLargeThumbNailSize[1]
+                                 .u32Height);
+    }
   }
 
   flow_param = easymedia::JoinFlowParam(flow_param, 1, enc_param);
@@ -2754,6 +2784,7 @@ static RK_S32 RkmediaCreateJpegLight(RkmediaChannel *VenChn) {
   RK_U32 u32InFpsDen = 1;
   RK_U32 u32OutFpsNum = 1;
   RK_U32 u32OutFpsDen = 1;
+  RK_BOOL bSupprtDcf = RK_FALSE;
   const RK_CHAR *pcRkmediaRcMode = nullptr;
   const RK_CHAR *pcRkmediaCodecType = nullptr;
   RK_S32 mjpeg_bps = 0;
@@ -2805,6 +2836,7 @@ static RK_S32 RkmediaCreateJpegLight(RkmediaChannel *VenChn) {
     pcRkmediaCodecType = VIDEO_MJPEG;
   } else {
     // JPEG
+    bSupprtDcf = stVencChnAttr->stVencAttr.stAttrJpege.bSupportDCF;
     pcRkmediaCodecType = IMAGE_JPEG;
   }
 
@@ -2819,6 +2851,31 @@ static RK_S32 RkmediaCreateJpegLight(RkmediaChannel *VenChn) {
   PARAM_STRING_APPEND_TO(enc_param, KEY_BUFFER_VIR_WIDTH, vir_width);
   PARAM_STRING_APPEND_TO(enc_param, KEY_BUFFER_VIR_HEIGHT, vir_height);
   PARAM_STRING_APPEND_TO(enc_param, KEY_ROTATION, enRotation);
+  PARAM_STRING_APPEND_TO(enc_param, KEY_ENABLE_JPEG_DCF, bSupprtDcf);
+  if (stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum > 0) {
+    PARAM_STRING_APPEND_TO(
+        enc_param, KEY_JPEG_MPF_CNT,
+        stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum);
+    PARAM_STRING_APPEND_TO(
+        enc_param, KEY_JPEG_MPF0_W,
+        stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[0]
+            .u32Width);
+    PARAM_STRING_APPEND_TO(
+        enc_param, KEY_JPEG_MPF0_H,
+        stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[0]
+            .u32Height);
+  }
+
+  if (stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum > 1) {
+    PARAM_STRING_APPEND_TO(
+        enc_param, KEY_JPEG_MPF1_W,
+        stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[1]
+            .u32Width);
+    PARAM_STRING_APPEND_TO(
+        enc_param, KEY_JPEG_MPF1_H,
+        stVencChnAttr->stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[1]
+            .u32Height);
+  }
   if (stVencChnParam->stCropCfg.bEnable) {
     PARAM_STRING_APPEND_TO(enc_param, KEY_RECT_X,
                            stVencChnParam->stCropCfg.stRect.s32X);

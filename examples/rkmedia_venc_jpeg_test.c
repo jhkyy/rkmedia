@@ -105,7 +105,8 @@ static void print_usage(const RK_CHAR *name) {
   printf("\t-w | --width: destination width, Default:720\n");
   printf("\t-h | --height: destination height, Default:480\n");
   printf("\t-o | --output: output dirpath, Default:/tmp/\n");
-  printf("\t-r | --rotation: rotation control, Default:0. Values:0/90/180/270\n");
+  printf(
+      "\t-r | --rotation: rotation control, Default:0. Values:0/90/180/270\n");
   printf("\t tip: destination resolution should not over 4096*4096\n");
 }
 
@@ -195,21 +196,21 @@ int main(int argc, char *argv[]) {
 
   VENC_ROTATION_E enRotation;
   switch (u32Rotation) {
-    case 0:
-      enRotation = VENC_ROTATION_0;
-      break;
-    case 90:
-      enRotation = VENC_ROTATION_90;
-      break;
-    case 180:
-      enRotation = VENC_ROTATION_180;
-      break;
-    case 270:
-      enRotation = VENC_ROTATION_270;
-      break;
-    default:
-      printf("Invalid rotation(%d), should be 0/90/180/270\n", u32Rotation);
-      return -1;
+  case 0:
+    enRotation = VENC_ROTATION_0;
+    break;
+  case 90:
+    enRotation = VENC_ROTATION_90;
+    break;
+  case 180:
+    enRotation = VENC_ROTATION_180;
+    break;
+  case 270:
+    enRotation = VENC_ROTATION_270;
+    break;
+  default:
+    printf("Invalid rotation(%d), should be 0/90/180/270\n", u32Rotation);
+    return -1;
   }
 
   ret = RK_MPI_SYS_Init();
@@ -245,6 +246,16 @@ int main(int argc, char *argv[]) {
   venc_chn_attr.stVencAttr.stAttrJpege.u32ZoomVirWidth = u32DstWidth;
   venc_chn_attr.stVencAttr.stAttrJpege.u32ZoomVirHeight = u32DstHeight;
   venc_chn_attr.stVencAttr.enRotation = enRotation;
+  venc_chn_attr.stVencAttr.stAttrJpege.bSupportDCF = RK_TRUE;
+  venc_chn_attr.stVencAttr.stAttrJpege.stMPFCfg.u8LargeThumbNailNum = 2;
+  venc_chn_attr.stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[0]
+      .u32Width = 164;
+  venc_chn_attr.stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[0]
+      .u32Height = 128;
+  venc_chn_attr.stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[1]
+      .u32Width = 128;
+  venc_chn_attr.stVencAttr.stAttrJpege.stMPFCfg.astLargeThumbNailSize[1]
+      .u32Height = 164;
   ret = RK_MPI_VENC_CreateChn(0, &venc_chn_attr);
   if (ret) {
     printf("Create Venc failed! ret=%d\n", ret);
@@ -278,7 +289,6 @@ int main(int argc, char *argv[]) {
     printf("Bind VI[1] to VENC[0]::JPEG failed! ret=%d\n", ret);
     return -1;
   }
-
 
   RK_MPI_VENC_RGN_Init(0, NULL);
 

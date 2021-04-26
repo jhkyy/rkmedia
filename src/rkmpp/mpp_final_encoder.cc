@@ -198,6 +198,8 @@ bool MPPMJPEGConfig::InitConfig(MPPEncoder &mpp_enc, MediaConfig &cfg) {
     img_info = cfg.img_cfg.image_info;
     rect_info = cfg.img_cfg.rect_info;
     ENCODER_CFG_CHECK(img_cfg.qfactor, 1, 99, 70, "qfactor");
+    ENCODER_CFG_CHECK(img_cfg.dcf, 0, 1, 0, "dcf");
+    ENCODER_CFG_CHECK(img_cfg.mpf_cnt, 0, 2, 0, "mpf_cnt");
   } else if (cfg.type == Type::Video) {
     RKMEDIA_LOGI("MPP Encoder[JPEG]: config for MJPEG...\n");
     vid_cfg = cfg.vid_cfg;
@@ -241,7 +243,21 @@ bool MPPMJPEGConfig::InitConfig(MPPEncoder &mpp_enc, MediaConfig &cfg) {
                  (int)cfg.type);
     return false;
   }
-
+  if (img_cfg.dcf) {
+    mpp_enc.thumbnail_width[0] = 160;
+    mpp_enc.thumbnail_height[0] = 120;
+    mpp_enc.thumbnail_type[0] = THUMBNAIL_TYPE_APP1;
+  }
+  if (img_cfg.mpf_cnt > 0) {
+    mpp_enc.thumbnail_width[1] = img_cfg.mpfw[0];
+    mpp_enc.thumbnail_height[1] = img_cfg.mpfh[0];
+    mpp_enc.thumbnail_type[1] = THUMBNAIL_TYPE_APP2;
+  }
+  if (img_cfg.mpf_cnt > 1) {
+    mpp_enc.thumbnail_width[2] = img_cfg.mpfw[1];
+    mpp_enc.thumbnail_height[2] = img_cfg.mpfh[1];
+    mpp_enc.thumbnail_type[2] = THUMBNAIL_TYPE_APP2;
+  }
   MppEncRotationCfg rotation = MPP_ENC_ROT_0;
   switch (vid_cfg.rotation) {
   case 0:

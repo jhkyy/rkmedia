@@ -9,15 +9,14 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "buffer.h"
+#include "mpp_jpeg_packet.h"
+#include "utils.h"
 #include <memory>
-
-#ifdef RGA_OSD_ENABLE
 #include <rga/im2d.h>
 #include <rga/rga.h>
-#endif // RGA_OSD_ENABLE
 
-#include "buffer.h"
-#include "utils.h"
+#include "mpp_jpeg_fd_info.h"
 
 #ifdef MOD_TAG
 #undef MOD_TAG
@@ -204,11 +203,6 @@ int MPPEncoder::PrepareMppFrame(const std::shared_ptr<MediaBuffer> &input,
   }
 #endif // MPP_SUPPORT_HW_OSD
 
-#ifdef RGA_OSD_ENABLE
-  if (rga_osd_cnt > 0)
-    RgaOsdRegionProcess(hw_buffer);
-#endif
-
   int ud_idx = 0;
   if (userdata_len) {
     RKMEDIA_LOGD("MPP Encoder: set userdata(%dBytes) to frame\n", userdata_len);
@@ -239,6 +233,13 @@ int MPPEncoder::PrepareMppFrame(const std::shared_ptr<MediaBuffer> &input,
     ud_idx++;
   }
 
+  if (app2_len) {
+    ud_datas[ud_idx].pdata = app2;
+    ud_datas[ud_idx].len = app2_len;
+    ud_datas[ud_idx].uuid = NULL;
+    ud_idx++;
+  }
+
   if (ud_idx) {
     ud_set.count = ud_idx;
     ud_set.datas = ud_datas;
@@ -265,10 +266,8 @@ int MPPEncoder::PrepareMppFrame(const std::shared_ptr<MediaBuffer> &input,
 int MPPEncoder::PrepareMppPacket(std::shared_ptr<MediaBuffer> &output,
                                  MppPacket &packet) {
   MppBuffer mpp_buf = nullptr;
-
   if (!output->IsHwBuffer())
     return 0;
-
   MPP_RET ret = init_mpp_buffer(mpp_buf, output, 0);
   if (ret) {
     RKMEDIA_LOGI("import output stream buffer failed\n");
@@ -280,6 +279,139 @@ int MPPEncoder::PrepareMppPacket(std::shared_ptr<MediaBuffer> &output,
     mpp_buffer_put(mpp_buf);
   }
 
+  return 0;
+}
+
+int MPPEncoder::PrepareThumbnail(const std::shared_ptr<MediaBuffer> &input,
+                                 int thumbnail_num, char *buf, int *len) {
+  MppBuffer frame_buf = nullptr;
+  MppFrame frame = nullptr;
+  MppPacket packet = nullptr;
+  MppBuffer mv_buf = nullptr;
+  MppEncCfg enc_cfg;
+  int packet_len = 0;
+  assert(thumbnail_num <= THUMBNAIL_MAX_CNT);
+  assert(thumbnail_type[thumbnail_num] != 0);
+
+  ImageBuffer *hw_buffer = static_cast<ImageBuffer *>(input.get());
+  if (thumbnail_type[thumbnail_num] == THUMBNAIL_TYPE_APP2) {
+    assert(thumbnail_width[thumbnail_num] <
+           this->GetConfig().img_cfg.rect_info.w);
+    assert(thumbnail_width[thumbnail_num] > 160);
+    assert(thumbnail_height[thumbnail_num] <
+           this->GetConfig().img_cfg.rect_info.h);
+    assert(thumbnail_height[thumbnail_num] < 120);
+  }
+
+  if (thumbnail_type[thumbnail_num] == THUMBNAIL_TYPE_APP1) {
+    assert(thumbnail_width[thumbnail_num] == 160);
+    assert(thumbnail_height[thumbnail_num] == 120);
+  }
+  int ret = mpp_frame_init(&frame);
+  if (MPP_OK != ret) {
+    RKMEDIA_LOGI("mpp_frame_init failed\n");
+    return ret;
+  }
+  extern int get_rga_format(PixelFormat f);
+  PixelFormat src_pixfmt = input->GetPixelFormat();
+  PixelFormat trg_pixfmt = PIX_FMT_NV12;
+  RK_U32 u32PicSize = CalPixFmtSize(trg_pixfmt, thumbnail_width[thumbnail_num],
+                                    thumbnail_height[thumbnail_num], 8);
+  RK_VOID *pvPicPtr = malloc(u32PicSize);
+  if (pvPicPtr == NULL) {
+    goto THUMB_END;
+  }
+  rga_buffer_t src_info, dst_info;
+  memset(&src_info, 0, sizeof(rga_buffer_t));
+  memset(&dst_info, 0, sizeof(rga_buffer_t));
+  src_info = wrapbuffer_virtualaddr(
+      input->GetPtr(), hw_buffer->GetWidth(), hw_buffer->GetHeight(),
+      get_rga_format(src_pixfmt), hw_buffer->GetVirWidth(),
+      hw_buffer->GetVirHeight());
+  im_rect rect_info;
+  rect_info.x = this->GetConfig().img_cfg.rect_info.x;
+  rect_info.y = this->GetConfig().img_cfg.rect_info.y;
+  rect_info.width = this->GetConfig().img_cfg.rect_info.w;
+  rect_info.height = this->GetConfig().img_cfg.rect_info.h;
+
+  dst_info = wrapbuffer_virtualaddr(
+      pvPicPtr, thumbnail_width[thumbnail_num], thumbnail_height[thumbnail_num],
+      get_rga_format(trg_pixfmt), UPALIGNTO(thumbnail_width[thumbnail_num], 8),
+      UPALIGNTO(thumbnail_height[thumbnail_num], 8));
+  imcrop(src_info, dst_info, rect_info);
+  if (mpp_enc_cfg_init(&enc_cfg)) {
+    RKMEDIA_LOGE("MPP Encoder: MPPConfig: cfg init failed!");
+    return ret;
+  }
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:width",
+                             thumbnail_width[thumbnail_num]);
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:height",
+                             thumbnail_height[thumbnail_num]);
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:hor_stride",
+                             UPALIGNTO(thumbnail_width[thumbnail_num], 8));
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:ver_stride",
+                             UPALIGNTO(thumbnail_height[thumbnail_num], 8));
+  ret = EncodeControl(MPP_ENC_SET_CFG, enc_cfg);
+  if (ret) {
+    RKMEDIA_LOGE("MPP Encoder[JPEG]: set resolution cfg failed ret %d\n", ret);
+    goto THUMB_END;
+  }
+  mpp_frame_set_pts(frame, hw_buffer->GetUSTimeStamp());
+  mpp_frame_set_dts(frame, hw_buffer->GetUSTimeStamp());
+  mpp_frame_set_width(frame, thumbnail_width[thumbnail_num]);
+  mpp_frame_set_height(frame, thumbnail_height[thumbnail_num]);
+  mpp_frame_set_offset_x(frame, 0);
+  mpp_frame_set_offset_y(frame, 0);
+  mpp_frame_set_fmt(frame, ConvertToMppPixFmt(PIX_FMT_NV12));
+  mpp_frame_set_hor_stride(frame, UPALIGNTO(thumbnail_width[thumbnail_num], 8));
+  mpp_frame_set_ver_stride(frame,
+                           UPALIGNTO(thumbnail_height[thumbnail_num], 8));
+  ret = init_mpp_buffer(frame_buf, NULL, u32PicSize);
+  if (ret) {
+    RKMEDIA_LOGI("init frame buffer failed\n");
+    goto THUMB_END;
+  }
+
+  if (frame_buf) {
+    memcpy(mpp_buffer_get_ptr(frame_buf), pvPicPtr, u32PicSize);
+    mpp_frame_set_buffer(frame, frame_buf);
+    mpp_buffer_put(frame_buf);
+  }
+  mpp_frame_set_eos(frame, 1);
+  ret = Process(frame, packet, mv_buf);
+  if (ret)
+    goto THUMB_END;
+
+  packet_len = mpp_packet_get_length(packet);
+  if (packet_len < *len) {
+    memcpy(buf, mpp_packet_get_data(packet), packet_len);
+    *len = packet_len;
+  }
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:width",
+                             this->GetConfig().img_cfg.rect_info.w);
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:height",
+                             this->GetConfig().img_cfg.rect_info.h);
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:hor_stride",
+                             this->GetConfig().img_cfg.image_info.vir_width);
+  ret |= mpp_enc_cfg_set_s32(enc_cfg, "prep:ver_stride",
+                             this->GetConfig().img_cfg.image_info.vir_height);
+  ret = EncodeControl(MPP_ENC_SET_CFG, enc_cfg);
+  if (ret) {
+    RKMEDIA_LOGE("MPP Encoder[JPEG]: set resolution cfg failed ret %d\n", ret);
+    goto THUMB_END;
+  }
+  if (enc_cfg) {
+    mpp_enc_cfg_deinit(enc_cfg);
+    RKMEDIA_LOGI("MPP Encoder: MPPConfig: cfg deinit done!\n");
+  }
+
+THUMB_END:
+  if (pvPicPtr)
+    free(pvPicPtr);
+  if (frame)
+    mpp_frame_deinit(&frame);
+  if (packet)
+    mpp_packet_deinit(&packet);
   return 0;
 }
 
@@ -332,6 +464,9 @@ int MPPEncoder::Process(const std::shared_ptr<MediaBuffer> &input,
   std::shared_ptr<MediaBuffer> mdinfo;
   RK_S32 temporal_id = -1;
   Type out_type;
+  char *mpf[3] = {NULL, NULL, NULL};
+  int mpf_len[3] = {0, 0, 0};
+  int image_cnt = 0;
 
   if (!input)
     return 0;
@@ -369,6 +504,45 @@ int MPPEncoder::Process(const std::shared_ptr<MediaBuffer> &input,
     goto ENCODE_OUT;
   }
 
+  if (thumbnail_type[0] == THUMBNAIL_TYPE_APP1) {
+    int len = 32 * 1024;
+    char *buf = (char *)malloc(len);
+    PrepareThumbnail(input, 0, buf, &len);
+    memset(userdata, 0, MPP_ENCODER_USERDATA_MAX_SIZE);
+    userdata_len =
+        PackageApp1(stIfd0, stIfd1, sizeof(stIfd0) / sizeof(IFD_S),
+                    sizeof(stIfd1) / sizeof(IFD_S), userdata, buf, len);
+    userdata_all_frame_en = 1;
+    RKMEDIA_LOGD("app1 len = %d, %d", userdata_len, len);
+    free(buf);
+  }
+
+#ifdef RGA_OSD_ENABLE
+  if (rga_osd_cnt > 0)
+    RgaOsdRegionProcess(hw_buffer);
+#endif
+
+  if (thumbnail_type[1] == THUMBNAIL_TYPE_APP2) {
+    mpf_len[1] = thumbnail_width[1] * thumbnail_height[1] * 2;
+    mpf[1] = (char *)malloc(mpf_len[1]);
+    PrepareThumbnail(input, 1, mpf[1], &mpf_len[1]);
+    image_cnt++;
+  }
+
+  if (thumbnail_type[2] == THUMBNAIL_TYPE_APP2) {
+    mpf_len[2] = thumbnail_width[2] * thumbnail_height[2] * 2;
+    mpf[2] = (char *)malloc(mpf_len[2]);
+    PrepareThumbnail(input, 2, mpf[2], &mpf_len[2]);
+    image_cnt++;
+  }
+  if (image_cnt) {
+    image_cnt++;
+    app2_len = PackageApp2(stMpfd, sizeof(stMpfd) / sizeof(IFD_S), image_cnt,
+                           app2, mpf_len);
+  } else {
+    app2_len = 0;
+  }
+
   ret = PrepareMppFrame(input, mdinfo, frame);
   if (ret) {
     RKMEDIA_LOGI("PrepareMppFrame failed\n");
@@ -401,6 +575,23 @@ int MPPEncoder::Process(const std::shared_ptr<MediaBuffer> &input,
   }
 
   packet_len = mpp_packet_get_length(packet);
+  if (image_cnt) {
+    char *ptr = (char *)mpp_packet_get_data(packet);
+    if (image_cnt > 1) {
+      memcpy(ptr + packet_len, mpf[1], mpf_len[1]);
+      free(mpf[1]);
+    }
+
+    if (image_cnt > 2) {
+      memcpy(ptr + packet_len + mpf_len[1], mpf[2], mpf_len[2]);
+      free(mpf[2]);
+    }
+    mpf_len[0] = packet_len - (0x14 + userdata_len);
+
+    PackageApp2(stMpfd, 5, image_cnt, ptr + 0x14 + userdata_len, mpf_len);
+    packet_len += mpf_len[1];
+    packet_len += mpf_len[2];
+  }
   {
     MppMeta packet_meta = mpp_packet_get_meta(packet);
     RK_S32 is_intra = 0;
@@ -1284,7 +1475,7 @@ int MPPEncoder::RoiUpdateRegions(EncROIRegion *regions, int region_cnt) {
 }
 
 int MPPEncoder::SetUserData(const char *data, uint16_t len) {
-  uint16_t valid_size = len;
+  uint32_t valid_size = len;
 
   if (!data && len) {
     RKMEDIA_LOGE("Mpp Encoder: invalid userdata!\n");

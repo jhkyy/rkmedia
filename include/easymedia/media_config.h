@@ -16,6 +16,10 @@ typedef struct {
   CodecType codec_type;
   // for jpeg only
   int qfactor; // 1-99: higher value => higher quality
+  int dcf;     // support dcf
+  int mpf_cnt;
+  int mpfw[2];
+  int mpfh[2];
 } ImageConfig;
 
 typedef struct {

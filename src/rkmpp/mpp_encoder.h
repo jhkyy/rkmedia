@@ -94,6 +94,8 @@ protected:
                                MppPacket &packet);
   virtual int PrepareMppExtraBuffer(std::shared_ptr<MediaBuffer> extra_output,
                                     MppBuffer &buffer);
+  virtual int PrepareThumbnail(const std::shared_ptr<MediaBuffer> &input,
+                               int thumbnail_num, char *buf, int *len);
   int Process(MppFrame frame, MppPacket &packet, MppBuffer &mv_buf);
 
 private:
@@ -124,14 +126,22 @@ private:
   // for roi regions config.
   MppEncROICfg roi_cfg;
 
-#define MPP_ENCODER_USERDATA_MAX_SIZE 1024
+#define MPP_ENCODER_USERDATA_MAX_SIZE 65535
   char userdata[MPP_ENCODER_USERDATA_MAX_SIZE];
   uint16_t userdata_len;
   uint16_t userdata_frame_id;
   uint8_t userdata_all_frame_en;
   MppEncUserDataSet ud_set;
   MppEncUserDataFull ud_datas[2];
-
+  uint8_t thumbnail_cnt;
+#define THUMBNAIL_MAX_CNT 3
+#define THUMBNAIL_TYPE_APP1 1
+#define THUMBNAIL_TYPE_APP2 2
+  uint16_t thumbnail_width[THUMBNAIL_MAX_CNT];
+  uint16_t thumbnail_height[THUMBNAIL_MAX_CNT];
+  uint8_t thumbnail_type[THUMBNAIL_MAX_CNT];
+  uint16_t app2_len;
+  char app2[512];
   friend class MPPMJPEGConfig;
   friend class MPPCommonConfig;
 };

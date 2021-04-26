@@ -106,6 +106,7 @@ bool ParseMediaConfigFromMap(std::map<std::string, std::string> &params,
     RKMEDIA_LOGE("%s: rect_x = %d, rect_y = %d, rect.w = %d, rect.h = %d \n",
                  __func__, img_cfg.rect_info.x, img_cfg.rect_info.y,
                  img_cfg.rect_info.w, img_cfg.rect_info.h);
+
   } else {
     // audio
     AudioConfig &aud_cfg = mc.aud_cfg;
@@ -123,7 +124,13 @@ bool ParseMediaConfigFromMap(std::map<std::string, std::string> &params,
   if (image_in) {
     ImageConfig &img_cfg = mc.img_cfg;
     img_cfg.image_info = info;
-    GET_STRING_TO_INT(img_cfg.qfactor, params, KEY_JPEG_QFACTOR, 0)
+    GET_STRING_TO_INT(img_cfg.qfactor, params, KEY_JPEG_QFACTOR, 0);
+    GET_STRING_TO_INT(img_cfg.dcf, params, KEY_ENABLE_JPEG_DCF, 0);
+    GET_STRING_TO_INT(img_cfg.mpf_cnt, params, KEY_JPEG_MPF_CNT, 0);
+    GET_STRING_TO_INT(img_cfg.mpfw[0], params, KEY_JPEG_MPF0_W, 0);
+    GET_STRING_TO_INT(img_cfg.mpfw[1], params, KEY_JPEG_MPF1_W, 0);
+    GET_STRING_TO_INT(img_cfg.mpfh[0], params, KEY_JPEG_MPF0_H, 0);
+    GET_STRING_TO_INT(img_cfg.mpfh[1], params, KEY_JPEG_MPF1_H, 0);
     img_cfg.codec_type = codec_type;
     mc.type = Type::Image;
 

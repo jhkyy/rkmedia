@@ -141,12 +141,26 @@ typedef enum rkVENC_ROTATION_E {
   VENC_ROTATION_BUTT
 } VENC_ROTATION_E;
 
+typedef struct rkVENC_MPF_CFG_S {
+  RK_U8 u8LargeThumbNailNum;
+  SIZE_S astLargeThumbNailSize[2];
+} VENC_MPF_CFG_S;
+
+typedef enum rkVENC_PIC_RECEIVE_MODE_E {
+  VENC_PIC_RECEIVE_SINGLE = 0,
+  VENC_PIC_RECEIVE_MULTI,
+  VENC_PIC_RECEIVE_BUTT
+} VENC_PIC_RECEIVE_MODE_E;
+
 /*the attribute of jpege*/
 typedef struct rkVENC_ATTR_JPEG_S {
   RK_U32 u32ZoomWidth;  // Zoom to specified width
   RK_U32 u32ZoomHeight; // Zoom to specified height
   RK_U32 u32ZoomVirWidth;
   RK_U32 u32ZoomVirHeight;
+  RK_BOOL bSupportDCF; // support DCF，160 * 120 JPEG
+  VENC_MPF_CFG_S stMPFCfg;
+  VENC_PIC_RECEIVE_MODE_E enReceiveMode;
 } VENC_ATTR_JPEG_S;
 
 /*the attribute of mjpege*/

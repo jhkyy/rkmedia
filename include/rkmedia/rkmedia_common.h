@@ -353,6 +353,11 @@ typedef enum rkSAMPLE_FORMAT_E {
   RK_SAMPLE_FMT_NB
 } SAMPLE_FORMAT_E;
 
+typedef struct rkSIZE_S {
+  RK_U32 u32Width;
+  RK_U32 u32Height;
+} SIZE_S;
+
 typedef struct rkRECT_S {
   RK_S32 s32X;
   RK_S32 s32Y;

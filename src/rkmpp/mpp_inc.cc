@@ -175,9 +175,19 @@ MPP_RET init_mpp_buffer(MppBuffer &buffer,
                         const std::shared_ptr<MediaBuffer> &mb,
                         size_t frame_size) {
   MPP_RET ret;
-  int fd = mb->GetFD();
-  void *ptr = mb->GetPtr();
-  size_t size = mb->GetValidSize();
+  int fd;
+  void *ptr;
+  size_t size;
+
+  if (mb == NULL) {
+    fd = -1;
+    ptr = NULL;
+    size = 0;
+  } else {
+    fd = mb->GetFD();
+    ptr = mb->GetPtr();
+    size = mb->GetValidSize();
+  }
 
   if (fd >= 0) {
     MppBufferInfo info;
