@@ -2675,7 +2675,7 @@ static RK_S32 RkmediaCreateJpegSnapPipeline(RkmediaChannel *VenChn) {
   RkmediaChnInitBuffer(VenChn);
   video_jpeg_flow->SetOutputCallBack(VenChn, FlowOutputCallback);
 
-  VenChn->rkmedia_flow = video_jpeg_flow;
+  VenChn->rkmedia_flow = video_encoder_flow;
   VenChn->rkmedia_flow_list.push_back(video_decoder_flow);
   if (bEnableRga)
     VenChn->rkmedia_flow_list.push_back(video_rga_flow);
@@ -3714,17 +3714,37 @@ RK_S32 RK_MPI_VENC_SetChnParam(VENC_CHN VeChn,
   memcpy(&g_venc_chns[VeChn].venc_attr.param, stVencChnParam,
          sizeof(VENC_CHN_PARAM_S));
   VideoResolutionCfg vid_cfg;
-  vid_cfg.width = g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32PicWidth;
-  vid_cfg.height = g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32PicHeight;
-  vid_cfg.vir_width = g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32VirWidth;
-  vid_cfg.vir_height =
-      g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32VirHeight;
+  std::shared_ptr<easymedia::Flow> flow;
+  CODEC_TYPE_E enCodecType =
+      g_venc_chns[VeChn].venc_attr.attr.stVencAttr.enType;
+  if (((enCodecType == RK_CODEC_TYPE_MJPEG) ||
+       (enCodecType == RK_CODEC_TYPE_JPEG)) &&
+      (g_venc_chns[VeChn].venc_attr.bFullFunc)) {
+    vid_cfg.width =
+        g_venc_chns[VeChn].venc_attr.attr.stVencAttr.stAttrJpege.u32ZoomWidth;
+    vid_cfg.height =
+        g_venc_chns[VeChn].venc_attr.attr.stVencAttr.stAttrJpege.u32ZoomHeight;
+    vid_cfg.vir_width =
+        g_venc_chns[VeChn]
+            .venc_attr.attr.stVencAttr.stAttrJpege.u32ZoomVirWidth;
+    vid_cfg.vir_height =
+        g_venc_chns[VeChn]
+            .venc_attr.attr.stVencAttr.stAttrJpege.u32ZoomVirHeight;
+    flow = g_venc_chns[VeChn].rkmedia_flow_list.back();
+  } else {
+    vid_cfg.width = g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32PicWidth;
+    vid_cfg.height = g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32PicHeight;
+    vid_cfg.vir_width =
+        g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32VirWidth;
+    vid_cfg.vir_height =
+        g_venc_chns[VeChn].venc_attr.attr.stVencAttr.u32VirHeight;
+    flow = g_venc_chns[VeChn].rkmedia_flow;
+  }
   vid_cfg.x = stVencChnParam->stCropCfg.stRect.s32X;
   vid_cfg.y = stVencChnParam->stCropCfg.stRect.s32Y;
   vid_cfg.w = stVencChnParam->stCropCfg.stRect.u32Width;
   vid_cfg.h = stVencChnParam->stCropCfg.stRect.u32Height;
-  int ret =
-      video_encoder_set_resolution(g_venc_chns[VeChn].rkmedia_flow, &vid_cfg);
+  int ret = video_encoder_set_resolution(flow, &vid_cfg);
   if (ret) {
     g_venc_mtx.unlock();
     return -RK_ERR_VENC_BUSY;
