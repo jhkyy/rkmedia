@@ -6,8 +6,8 @@
 
 #include "buffer.h"
 #include "encoder.h"
-#include "rkaudio_utils.h"
 #include "media_type.h"
+#include "rkaudio_utils.h"
 
 #ifdef MOD_TAG
 #undef MOD_TAG
@@ -50,8 +50,8 @@ RKAUDIOAudioEncoder::RKAUDIOAudioEncoder(const char *param)
   std::list<std::pair<const std::string, std::string &>> req_list;
   req_list.push_back(std::pair<const std::string, std::string &>(
       KEY_OUTPUTDATATYPE, output_data_type));
-  req_list.push_back(
-      std::pair<const std::string, std::string &>(KEY_NAME, rkaudio_codec_name));
+  req_list.push_back(std::pair<const std::string, std::string &>(
+      KEY_NAME, rkaudio_codec_name));
   parse_media_param_match(param, params, req_list);
 }
 
@@ -173,7 +173,9 @@ bool RKAUDIOAudioEncoder::InitConfig(const MediaConfig &cfg) {
   return AudioEncoder::InitConfig(mc);
 }
 
-int RKAUDIOAudioEncoder::GetNbSamples() { return avctx ? avctx->frame_size : 0; }
+int RKAUDIOAudioEncoder::GetNbSamples() {
+  return avctx ? avctx->frame_size : 0;
+}
 
 int RKAUDIOAudioEncoder::SendInput(const std::shared_ptr<MediaBuffer> &input) {
   int ret = 0;

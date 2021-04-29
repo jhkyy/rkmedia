@@ -387,9 +387,9 @@ int MPPDecoder::Process(const std::shared_ptr<MediaBuffer> &input,
     RKMEDIA_LOGI("mpp task input enqueue failed (ret = %d)\n", ret);
     goto out;
   }
-  ret = mpi->poll(ctx, MPP_PORT_OUTPUT, timeout != MPP_POLL_NON_BLOCK
-                                            ? (MppPollType)timeout
-                                            : MPP_POLL_MAX);
+  ret = mpi->poll(ctx, MPP_PORT_OUTPUT,
+                  timeout != MPP_POLL_NON_BLOCK ? (MppPollType)timeout
+                                                : MPP_POLL_MAX);
   if (ret) {
     RKMEDIA_LOGI("mpp output poll failed (ret = %d)\n", ret);
     goto out;

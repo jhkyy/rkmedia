@@ -64,9 +64,9 @@ typedef struct {
 } RkmediaRockxFaceLandmark;
 
 typedef struct {
-    int count;
-    RkmediaPoint points[32];
-    float score[32];
+  int count;
+  RkmediaPoint points[32];
+  float score[32];
 } RkmediaRockxKeypoints;
 
 typedef struct {

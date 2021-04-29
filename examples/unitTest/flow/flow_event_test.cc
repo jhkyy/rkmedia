@@ -309,7 +309,7 @@ DEFINE_FLOW_FACTORY(TestWriteFlow, Flow)
 const char *FACTORY(TestWriteFlow)::ExpectedInputDataType() { return nullptr; }
 const char *FACTORY(TestWriteFlow)::OutPutDataType() { return ""; }
 
-} // namespace media
+} // namespace easymedia
 
 static char optstr[] = "?i:o:w:h:t:";
 

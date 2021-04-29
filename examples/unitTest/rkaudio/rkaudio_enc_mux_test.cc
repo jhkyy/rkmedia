@@ -387,9 +387,10 @@ int main(int argc, char **argv) {
     case '?':
     default:
       printf("usage example: \n");
-      printf("rkaudio_enc_mux_test -t video_audio -i input.yuv -o output.mp4 -w "
-             "320 -h 240 -e "
-             "nv12_h264 -c rkmpp\n");
+      printf(
+          "rkaudio_enc_mux_test -t video_audio -i input.yuv -o output.mp4 -w "
+          "320 -h 240 -e "
+          "nv12_h264 -c rkmpp\n");
       printf("rkaudio_enc_mux_test -t audio -i alsa:default -o output.mp3 -e "
              "aud:fltp_mp3 "
              "-c aud:rkaudio_aud\n");
@@ -462,8 +463,9 @@ int main(int argc, char **argv) {
   int aud_stream_no = -1;
   auto mux = initMuxer(output_path);
   if (!mux) {
-    fprintf(stderr, "Init Muxer failed and then init file write stream."
-                    "output_path = %s\n",
+    fprintf(stderr,
+            "Init Muxer failed and then init file write stream."
+            "output_path = %s\n",
             output_path.c_str());
 
     file_write = initFileWrite(output_path);
@@ -497,9 +499,8 @@ int main(int argc, char **argv) {
     vid_enc->GetConfig().img_cfg.image_info.pix_fmt =
         StringToPixFmt(vid_enc_format.c_str());
 
-    if (mux &&
-        !mux->NewMuxerStream(vid_enc->GetConfig(), vid_enc->GetExtraData(),
-                             vid_stream_no)) {
+    if (mux && !mux->NewMuxerStream(vid_enc->GetConfig(),
+                                    vid_enc->GetExtraData(), vid_stream_no)) {
       fprintf(stderr, "NewMuxerStream failed for video\n");
       exit(EXIT_FAILURE);
     }
@@ -538,9 +539,8 @@ int main(int argc, char **argv) {
     auto &audio_info = aud_enc->GetConfig().aud_cfg.sample_info;
     sample_info = audio_info;
 
-    if (mux &&
-        !mux->NewMuxerStream(aud_enc->GetConfig(), aud_enc->GetExtraData(),
-                             aud_stream_no)) {
+    if (mux && !mux->NewMuxerStream(aud_enc->GetConfig(),
+                                    aud_enc->GetExtraData(), aud_stream_no)) {
       fprintf(stderr, "NewMuxerStream failed for audio\n");
       exit(EXIT_FAILURE);
     }

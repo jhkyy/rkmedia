@@ -48,9 +48,9 @@ _API short g_level_list[RK_ID_BUTT] = {
 };
 
 _API const char *mod_tag_list[RK_ID_BUTT] = {
-    "UNKNOW", "VB", "SYS", "VDEC", "VENC", "H264E", "JPEGE",
-    "H265E", "VO", "VI", "VP", "AIO", "AI", "AO", "AENC",
-    "ADEC", "ALGO_MD", "ALGO_OD", "RGA", "VMIX", "MUXER"};
+    "UNKNOW", "VB",   "SYS",     "VDEC",    "VENC", "H264E", "JPEGE",
+    "H265E",  "VO",   "VI",      "VP",      "AIO",  "AI",    "AO",
+    "AENC",   "ADEC", "ALGO_MD", "ALGO_OD", "RGA",  "VMIX",  "MUXER"};
 
 #define LOG_FILE_PATH "/tmp/loglevel"
 static bool monitor_log_level_quit = false;
@@ -168,7 +168,7 @@ static void *monitor_log_level(void *arg) {
 
 _API void LOG_INIT() {
   char *ptr = NULL;
-  for(int i = 0; i < RK_ID_BUTT; i++)
+  for (int i = 0; i < RK_ID_BUTT; i++)
     assert(mod_tag_list[i] != NULL);
   rkmedia_log_method = LOG_METHOD_PRINT;
 #ifdef RKMEDIA_SUPPORT_MINILOG

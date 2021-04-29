@@ -112,7 +112,7 @@ void SourceStreamFlow::ReadThreadRun() {
 #ifdef RKMEDIA_TIMESTAMP_DEBUG
     if (buffer)
       buffer->TimeStampReset();
-#endif //RKMEDIA_TIMESTAMP_DEBUG
+#endif // RKMEDIA_TIMESTAMP_DEBUG
     SendInput(buffer, 0);
   }
 }

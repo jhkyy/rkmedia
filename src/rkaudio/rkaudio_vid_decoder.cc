@@ -67,8 +67,8 @@ bool RKAudioDecoder::Init() {
 }
 
 int RKAudioDecoder::Process(const std::shared_ptr<MediaBuffer> &input _UNUSED,
-                           std::shared_ptr<MediaBuffer> &output _UNUSED,
-                           std::shared_ptr<MediaBuffer> extra_output _UNUSED) {
+                            std::shared_ptr<MediaBuffer> &output _UNUSED,
+                            std::shared_ptr<MediaBuffer> extra_output _UNUSED) {
   return 0;
 }
 
@@ -88,8 +88,8 @@ int RKAudioDecoder::SendInput(const std::shared_ptr<MediaBuffer> &input) {
   if (need_split) {
     while (data_size > 0) {
       ret =
-          av_parser_parse2(parser, rkaudio_context, &pkt->data, &pkt->size, data,
-                           data_size, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
+          av_parser_parse2(parser, rkaudio_context, &pkt->data, &pkt->size,
+                           data, data_size, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
       if (ret < 0) {
         fprintf(stderr, "Error while parsing\n");
         return -1;

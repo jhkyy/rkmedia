@@ -4,8 +4,8 @@
 
 #include <stdlib.h>
 
-#include "rkmedia_buffer.h"
 #include "image.h"
+#include "rkmedia_buffer.h"
 #include "rkmedia_buffer_impl.h"
 #include "rkmedia_utils.h"
 #include "rkmedia_venc.h"

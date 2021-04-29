@@ -171,7 +171,7 @@ int V4L2CaptureStream::Open() {
   fmt.fmt.pix_mp.height = height;
   fmt.fmt.pix_mp.pixelformat = GetV4L2FmtByString(data_type_str);
   fmt.fmt.pix_mp.field = V4L2_FIELD_INTERLACED;
-  fmt.fmt.pix_mp.quantization = quantization;//V4L2_QUANTIZATION_FULL_RANGE;
+  fmt.fmt.pix_mp.quantization = quantization; // V4L2_QUANTIZATION_FULL_RANGE;
   if (fmt.fmt.pix.pixelformat == 0) {
     RKMEDIA_LOGE("unsupport input format : %s\n", data_type_str);
     return -1;

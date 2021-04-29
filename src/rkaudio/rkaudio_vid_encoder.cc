@@ -7,8 +7,8 @@
 
 #include "buffer.h"
 #include "encoder.h"
-#include "rkaudio_utils.h"
 #include "image.h"
+#include "rkaudio_utils.h"
 
 #ifdef MOD_TAG
 #undef MOD_TAG
@@ -107,8 +107,8 @@ bool RKAudioVideoEncoder::RKAudioVideoEncoder::Init() {
 }
 
 int RKAudioVideoEncoder::Process(const std::shared_ptr<MediaBuffer> &input,
-                                std::shared_ptr<MediaBuffer> &output,
-                                std::shared_ptr<MediaBuffer> extra_output) {
+                                 std::shared_ptr<MediaBuffer> &output,
+                                 std::shared_ptr<MediaBuffer> extra_output) {
   UNUSED(input);
   UNUSED(output);
   UNUSED(extra_output);
@@ -216,6 +216,8 @@ DEFINE_VIDEO_ENCODER_FACTORY(RKAudioVideoEncoder)
 const char *FACTORY(RKAudioVideoEncoder)::ExpectedInputDataType() {
   return nullptr;
 }
-const char *FACTORY(RKAudioVideoEncoder)::OutPutDataType() { return VIDEO_H264; }
+const char *FACTORY(RKAudioVideoEncoder)::OutPutDataType() {
+  return VIDEO_H264;
+}
 
 } // namespace easymedia

@@ -8,8 +8,8 @@
 #include <linux/videodev2.h>
 
 #ifdef RKAIQ
-#include <rk_aiq_user_api_sysctl.h>
 #include "rk_aiq_user_api_ahdr.h"
+#include <rk_aiq_user_api_sysctl.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,8 +23,7 @@ extern "C" {
 #define RKISP_CMD_GET_SHM_BUFFD                                                \
   _IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct rkisp_thunderboot_shmem)
 
-#define RKISP_CMD_FREE_SHARED_BUF \
-        _IO('V', BASE_VIDIOC_PRIVATE + 3)
+#define RKISP_CMD_FREE_SHARED_BUF _IO('V', BASE_VIDIOC_PRIVATE + 3)
 
 struct rkisp_fastboot_resmem_head {
   uint16_t enable;

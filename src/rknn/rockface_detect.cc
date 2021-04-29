@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "rockface/rockface.h"
 #include "buffer.h"
 #include "filter.h"
 #include "lock.h"
 #include "rknn_utils.h"
+#include "rockface/rockface.h"
 
 #define DEFAULT_LIC_PATH "/userdata/key.lic"
 

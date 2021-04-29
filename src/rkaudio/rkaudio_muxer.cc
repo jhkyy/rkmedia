@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 #include "muxer.h"
-#include <inttypes.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #include "buffer.h"
-#include "rkaudio_utils.h"
 #include "rkaudio_put_bits.h"
+#include "rkaudio_utils.h"
 
 namespace easymedia {
 
@@ -202,15 +202,16 @@ static int mp3_find_samplerate_index(int sample_rate) {
       {32000, 5},  {24000, 6}, {22050, 7}, {16000, 8}, {12000, 9},
       {11025, 10}, {8000, 11}, {7350, 12}};
 
-  for(i = 0; i < MP3_SUPPORT_FREQ_COUNT; i++) {
-    if(table[i].sample_rate == sample_rate) {
+  for (i = 0; i < MP3_SUPPORT_FREQ_COUNT; i++) {
+    if (table[i].sample_rate == sample_rate) {
       sample_rate_index = table[i].sample_rate_index;
       break;
     }
   }
 
-  if(i == MP3_SUPPORT_FREQ_COUNT) {
-    RKMEDIA_LOGE("%s: No matching sample_rate(%d) index was found\n", __func__, sample_rate);
+  if (i == MP3_SUPPORT_FREQ_COUNT) {
+    RKMEDIA_LOGE("%s: No matching sample_rate(%d) index was found\n", __func__,
+                 sample_rate);
     return -1;
   }
 
@@ -224,37 +225,37 @@ static int mp3_put_audio_specific_config(AVCodecParameters *par) {
   int profile = FF_PROFILE_MP3_LOW;
   int sample_rate_index = 0;
 
-  if(!par) {
+  if (!par) {
     RKMEDIA_LOGE("%s: par is nullptr\n", __func__);
     return -1;
   }
 
-  par->extradata = (uint8_t*)av_mallocz(max_size);
+  par->extradata = (uint8_t *)av_mallocz(max_size);
   if (!par->extradata) {
     LOG_NO_MEMORY();
     return -1;
   }
 
   sample_rate_index = mp3_find_samplerate_index(par->sample_rate);
-  if(sample_rate_index < 0)
+  if (sample_rate_index < 0)
     return -1;
 
   init_put_bits(&pb, par->extradata, max_size);
   put_bits(&pb, 5, profile + 1);
   put_bits(&pb, 4, sample_rate_index);
   put_bits(&pb, 4, par->channels);
-  //GASpecificConfig
-  put_bits(&pb, 1, 0); //frame length - 1024 samples
-  put_bits(&pb, 1, 0); //does not depend on core coder
-  put_bits(&pb, 1, 0); //is not extension
+  // GASpecificConfig
+  put_bits(&pb, 1, 0); // frame length - 1024 samples
+  put_bits(&pb, 1, 0); // does not depend on core coder
+  put_bits(&pb, 1, 0); // is not extension
 
   if (needs_pce) {
-    //TODO
+    // TODO
   }
 
-  //Explicitly Mark SBR absent
-  put_bits(&pb, 11, 0x2b7); //sync extension
-  put_bits(&pb, 5, 5); //AOT_SBR
+  // Explicitly Mark SBR absent
+  put_bits(&pb, 11, 0x2b7); // sync extension
+  put_bits(&pb, 5, 5);      // AOT_SBR
   put_bits(&pb, 1, 0);
   flush_put_bits(&pb);
   par->extradata_size = put_bits_count(&pb) >> 3;
@@ -265,18 +266,18 @@ static int mp3_put_audio_specific_config(AVCodecParameters *par) {
 static int set_audio_extradata(AVCodecParameters *par) {
   int ret = 0;
 
-  switch(par->codec_id) {
-    case AV_CODEC_ID_MP3:
-      ret = mp3_put_audio_specific_config(par);
-      break;
-    case AV_CODEC_ID_MP2:
-    case AV_CODEC_ID_PCM_ALAW:
-    case AV_CODEC_ID_PCM_MULAW:
-      //No extradata field
-      break;
-    default:
-      RKMEDIA_LOGI("%s: Unknown format(%d)\n", __func__, par->codec_id);
-      break;
+  switch (par->codec_id) {
+  case AV_CODEC_ID_MP3:
+    ret = mp3_put_audio_specific_config(par);
+    break;
+  case AV_CODEC_ID_MP2:
+  case AV_CODEC_ID_PCM_ALAW:
+  case AV_CODEC_ID_PCM_MULAW:
+    // No extradata field
+    break;
+  default:
+    RKMEDIA_LOGI("%s: Unknown format(%d)\n", __func__, par->codec_id);
+    break;
   }
 
   return ret;
@@ -332,7 +333,7 @@ bool RKAUDIOMuxer::NewMuxerStream(
     memcpy(s->codecpar->extradata, enc_extra_data->GetPtr(), size);
     s->codecpar->extradata_size = size;
   } else if (mc.type == Type::Audio) {
-    if(set_audio_extradata(s->codecpar) < 0)
+    if (set_audio_extradata(s->codecpar) < 0)
       return false;
   }
 

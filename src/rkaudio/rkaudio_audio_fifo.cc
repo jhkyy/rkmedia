@@ -152,9 +152,9 @@ int AudioFifo::SendInput(std::shared_ptr<MediaBuffer> input _UNUSED) {
   in_timestamp = in->GetUSTimeStamp();
   in_pts += in->GetSamples();
 
-  rkaudio_samples_fill_arrays(src_data, &src_linesize, (const uint8_t *)in->GetPtr(),
-                         channels, in->GetSamples(),
-                         SampleFmtToAVSamFmt(format), 1);
+  rkaudio_samples_fill_arrays(src_data, &src_linesize,
+                              (const uint8_t *)in->GetPtr(), channels,
+                              in->GetSamples(), SampleFmtToAVSamFmt(format), 1);
   if (add_samples_to_fifo(fifo, src_data, in->GetSamples())) {
     RKMEDIA_LOGI("add samples to fifo failed\n");
     return -1;
@@ -183,9 +183,9 @@ std::shared_ptr<MediaBuffer> AudioFifo::FetchOutput() {
         MediaBuffer::Alloc2(size), dst_info);
     assert(dst);
 
-    rkaudio_samples_fill_arrays(dst_data, &linesize, (const uint8_t *)dst->GetPtr(),
-                           channels, dst_nb_samples,
-                           SampleFmtToAVSamFmt(format), 1);
+    rkaudio_samples_fill_arrays(dst_data, &linesize,
+                                (const uint8_t *)dst->GetPtr(), channels,
+                                dst_nb_samples, SampleFmtToAVSamFmt(format), 1);
 
     if (av_audio_fifo_read(fifo, (void **)dst_data, dst_nb_samples) <
         dst_nb_samples) {

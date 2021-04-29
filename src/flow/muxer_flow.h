@@ -58,8 +58,9 @@ private:
   std::string muxer_param;
   std::string file_prefix;
   std::string file_path;
-  std::string output_format;       // rkaudio customio output format.
-  std::string rkaudio_avdictionary; // examples: key1-value,key2-value,key3-value
+  std::string output_format; // rkaudio customio output format.
+  std::string
+      rkaudio_avdictionary; // examples: key1-value,key2-value,key3-value
   std::shared_ptr<VideoRecorder> video_recorder;
   MediaConfig vid_enc_config;
   MediaConfig aud_enc_config;

@@ -194,11 +194,11 @@ int ResampleFilter::Resample(std::shared_ptr<SampleBuffer> src,
     return -1;
   }
   rkaudio_samples_fill_arrays(dst_data, &dst_linesize,
-                         (const uint8_t *)dst->GetPtr(), dst_nb_channels,
-                         dst_nb_samples, dst_sample_fmt, 1);
+                              (const uint8_t *)dst->GetPtr(), dst_nb_channels,
+                              dst_nb_samples, dst_sample_fmt, 1);
   rkaudio_samples_fill_arrays(src_data, &src_linesize,
-                         (const uint8_t *)src->GetPtr(), src_nb_channels,
-                         src_nb_samples, src_sample_fmt, 1);
+                              (const uint8_t *)src->GetPtr(), src_nb_channels,
+                              src_nb_samples, src_sample_fmt, 1);
   ret = swr_convert(swr_ctx, dst_data, dst_nb_samples,
                     (const uint8_t **)src_data, src_nb_samples);
   if (ret <= 0) {

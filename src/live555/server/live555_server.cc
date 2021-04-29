@@ -25,10 +25,10 @@
 #include "h265_server_media_subsession.hh"
 #endif
 
-#include "mp3_server_media_subsession.hh"
 #include "live555_media_input.hh"
 #include "mjpeg_server_media_subsession.hh"
 #include "mp2_server_media_subsession.hh"
+#include "mp3_server_media_subsession.hh"
 #include "simple_server_media_subsession.hh"
 
 #include "buffer.h"

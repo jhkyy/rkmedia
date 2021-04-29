@@ -224,12 +224,12 @@ typedef struct rkVENC_FRAME_RATE_S {
 
 /* the parameter of the venc channel*/
 typedef struct rkVENC_CHN_PARAM_S {
-  RK_BOOL bColor2Grey;   //TODO
-  RK_U32 u32Priority;    //TODO
-  RK_U32 u32MaxStrmCnt;  //TODO
-  RK_U32 u32PollWakeUpFrmCnt; //TODO
+  RK_BOOL bColor2Grey;        // TODO
+  RK_U32 u32Priority;         // TODO
+  RK_U32 u32MaxStrmCnt;       // TODO
+  RK_U32 u32PollWakeUpFrmCnt; // TODO
   VENC_CROP_INFO_S stCropCfg;
-  VENC_FRAME_RATE_S stFrameRate; //TODO
+  VENC_FRAME_RATE_S stFrameRate; // TODO
 } VENC_CHN_PARAM_S;
 
 /* The param of H264e cbr*/

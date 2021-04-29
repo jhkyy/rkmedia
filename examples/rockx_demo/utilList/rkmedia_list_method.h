@@ -5,8 +5,8 @@
 #ifndef __RKMEDIA_LIST_METHOD_H__
 #define __RKMEDIA_LIST_METHOD_H__
 
-#include <unistd.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #ifdef __cplusplus
 extern "C" {

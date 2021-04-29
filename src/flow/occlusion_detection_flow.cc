@@ -228,9 +228,10 @@ bool od_process(Flow *f, MediaBufferVector &input_vector) {
   RKMEDIA_LOGD(
       "[OcclusionDetection]: get info cnt:%02d, process call delta:%ld ms, "
       "elapse %ld ms\n",
-      info_cnt, tv0.tv_sec ? ((tv1.tv_sec - tv0.tv_sec) * 1000 +
-                              (tv1.tv_usec - tv0.tv_usec) / 1000)
-                           : 0,
+      info_cnt,
+      tv0.tv_sec ? ((tv1.tv_sec - tv0.tv_sec) * 1000 +
+                    (tv1.tv_usec - tv0.tv_usec) / 1000)
+                 : 0,
       (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000);
 
   tv0.tv_sec = tv1.tv_sec;

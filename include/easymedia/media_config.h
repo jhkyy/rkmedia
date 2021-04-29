@@ -159,10 +159,10 @@ typedef struct {
   int height;
   int vir_width;
   int vir_height;
-  int x;         //rect x;
-  int y;         //rect y;
-  int w;         //rect w;
-  int h;         //rect h;
+  int x; // rect x;
+  int y; // rect y;
+  int w; // rect w;
+  int h; // rect h;
 } VideoResolutionCfg;
 
 typedef enum EncSuperFrmMode_ {

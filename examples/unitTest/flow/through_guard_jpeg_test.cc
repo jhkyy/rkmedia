@@ -65,7 +65,7 @@ const char *FACTORY(SoftProcess)::ExpectedInputDataType() {
   return TYPE_ANYTHING;
 }
 const char *FACTORY(SoftProcess)::OutPutDataType() { return TYPE_ANYTHING; }
-}
+} // namespace easymedia
 
 static bool quit = false;
 static void sigterm_handler(int sig) {

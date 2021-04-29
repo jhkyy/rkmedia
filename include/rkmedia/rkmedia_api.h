@@ -145,9 +145,9 @@ _CAPI RK_S32 RK_MPI_VENC_GetVencChnAttr(VENC_CHN VencChn,
 _CAPI RK_S32 RK_MPI_VENC_SetVencChnAttr(VENC_CHN VencChn,
                                         VENC_CHN_ATTR_S *stVencChnAttr);
 _CAPI RK_S32 RK_MPI_VENC_GetChnParam(VENC_CHN VencChn,
-                                        VENC_CHN_PARAM_S *stVencChnParam);
+                                     VENC_CHN_PARAM_S *stVencChnParam);
 _CAPI RK_S32 RK_MPI_VENC_SetChnParam(VENC_CHN VencChn,
-                                        VENC_CHN_PARAM_S *stVencChnParam);
+                                     VENC_CHN_PARAM_S *stVencChnParam);
 _CAPI RK_S32 RK_MPI_VENC_GetRcParam(VENC_CHN VencChn,
                                     VENC_RC_PARAM_S *pstRcParam);
 _CAPI RK_S32 RK_MPI_VENC_SetRcParam(VENC_CHN VencChn,
@@ -171,7 +171,8 @@ _CAPI RK_S32 RK_MPI_VENC_InsertUserData(VENC_CHN VencChn, RK_U8 *pu8Data,
 _CAPI RK_S32 RK_MPI_VENC_SetResolution(
     VENC_CHN VencChn, VENC_RESOLUTION_PARAM_S stResolutionParam);
 
-_CAPI RK_S32 RK_MPI_VENC_SetRotation(VENC_CHN VeChn, VENC_ROTATION_E rotation_rate);
+_CAPI RK_S32 RK_MPI_VENC_SetRotation(VENC_CHN VeChn,
+                                     VENC_ROTATION_E rotation_rate);
 
 _CAPI RK_S32 RK_MPI_VENC_GetRoiAttr(VENC_CHN VencChn,
                                     VENC_ROI_ATTR_S *pstRoiAttr,
@@ -258,7 +259,8 @@ _CAPI RK_S32 RK_MPI_AENC_GetFd(AENC_CHN AencChn);
 _CAPI RK_S32 RK_MPI_ALGO_MD_CreateChn(ALGO_MD_CHN MdChn,
                                       const ALGO_MD_ATTR_S *pstChnAttr);
 _CAPI RK_S32 RK_MPI_ALGO_MD_DestroyChn(ALGO_MD_CHN MdChn);
-_CAPI RK_S32 RK_MPI_ALGO_MD_SetRegions(ALGO_MD_CHN MdChn, RECT_S *stRoiRects, RK_S32 regionNum);
+_CAPI RK_S32 RK_MPI_ALGO_MD_SetRegions(ALGO_MD_CHN MdChn, RECT_S *stRoiRects,
+                                       RK_S32 regionNum);
 _CAPI RK_S32 RK_MPI_ALGO_MD_EnableSwitch(ALGO_MD_CHN MdChn, RK_BOOL bEnable);
 
 /********************************************************************

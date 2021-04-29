@@ -341,8 +341,8 @@ bool do_io21(Flow *f, MediaBufferVector &input_vector) {
   if (!in0 && !in1)
     return false;
 
-// if (in0)
-// check_specific_buff(in0, flow->GetName());
+    // if (in0)
+    // check_specific_buff(in0, flow->GetName());
 
 #if DEBUG_IO_PROCESS
   if (in0)

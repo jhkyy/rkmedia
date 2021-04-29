@@ -734,8 +734,10 @@ bool MPPCommonConfig::InitConfig(MPPEncoder &mpp_enc, MediaConfig &cfg) {
 
   ENCODER_CFG_CHECK(rect_info.x, 0, img_cfg.image_info.width, 0, "rect_x");
   ENCODER_CFG_CHECK(rect_info.y, 0, img_cfg.image_info.height, 0, "rect_y");
-  ENCODER_CFG_CHECK(rect_info.w, 0, img_cfg.image_info.width, img_cfg.image_info.width, "rect_w");
-  ENCODER_CFG_CHECK(rect_info.h, 0, img_cfg.image_info.height, img_cfg.image_info.height, "rect_h");
+  ENCODER_CFG_CHECK(rect_info.w, 0, img_cfg.image_info.width,
+                    img_cfg.image_info.width, "rect_w");
+  ENCODER_CFG_CHECK(rect_info.h, 0, img_cfg.image_info.height,
+                    img_cfg.image_info.height, "rect_h");
 
   if (pic_type == -1) {
     RKMEDIA_LOGI("error input pixel format\n");

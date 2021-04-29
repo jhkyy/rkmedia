@@ -253,13 +253,20 @@ void RockxLandmarkPostProcess(rockx_image_t &input_img,
     result_item.landmark_info.object.image_height = out_landmark.image_height;
     result_item.landmark_info.object.face_box.left = out_landmark.face_box.left;
     result_item.landmark_info.object.face_box.top = out_landmark.face_box.top;
-    result_item.landmark_info.object.face_box.right = out_landmark.face_box.right;
-    result_item.landmark_info.object.face_box.bottom = out_landmark.face_box.bottom;
+    result_item.landmark_info.object.face_box.right =
+        out_landmark.face_box.right;
+    result_item.landmark_info.object.face_box.bottom =
+        out_landmark.face_box.bottom;
     result_item.landmark_info.object.score = out_landmark.score;
-    result_item.landmark_info.object.landmarks_count = out_landmark.landmarks_count;
-    for (int j = 0; j < out_landmark.landmarks_count && j < RKMEDIA_ROCKX_LANDMARK_MAX_COUNT; j++) {
-      result_item.landmark_info.object.landmarks[j].x = out_landmark.landmarks[j].x;
-      result_item.landmark_info.object.landmarks[j].y = out_landmark.landmarks[j].y;
+    result_item.landmark_info.object.landmarks_count =
+        out_landmark.landmarks_count;
+    for (int j = 0; j < out_landmark.landmarks_count &&
+                    j < RKMEDIA_ROCKX_LANDMARK_MAX_COUNT;
+         j++) {
+      result_item.landmark_info.object.landmarks[j].x =
+          out_landmark.landmarks[j].x;
+      result_item.landmark_info.object.landmarks[j].y =
+          out_landmark.landmarks[j].y;
     }
     nn_result.push_back(result_item);
   }

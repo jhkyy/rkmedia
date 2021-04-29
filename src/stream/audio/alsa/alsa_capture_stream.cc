@@ -11,7 +11,6 @@
 #include "alsa_utils.h"
 #include "alsa_volume.h"
 #include "buffer.h"
-#include "buffer.h"
 #include "media_type.h"
 #include "utils.h"
 

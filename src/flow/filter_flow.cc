@@ -164,7 +164,7 @@ FilterFlow::FilterFlow(const char *param)
         SetError(-EINVAL);
         return;
       }
-      //if downflow is jpeg encoder, need 16bypte align
+      // if downflow is jpeg encoder, need 16bypte align
       size_t m_size = CalPixFmtSize(out_img_info, 16);
       MediaBuffer::MemType m_type = StringToMemType(mem_type.c_str());
 
@@ -208,7 +208,7 @@ bool do_filters(Flow *f, MediaBufferVector &input_vector) {
           }
           out_buffer = std::make_shared<ImageBuffer>(*(mb.get()), info);
         } else {
-          //if downflow is jpeg encoder, need 16bypte align
+          // if downflow is jpeg encoder, need 16bypte align
           size_t size = CalPixFmtSize(info, 16);
           auto &&mb =
               MediaBuffer::Alloc2(size, MediaBuffer::MemType::MEM_HARD_WARE);

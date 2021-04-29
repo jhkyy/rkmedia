@@ -164,8 +164,7 @@ public:
 
   int SetInputFpsControl(int in, int out) {
     if (!in || (out > in)) {
-      RKMEDIA_LOGE("Flow:%s: invalid fps(%d --> %d)\n",
-                   GetFlowTag(), in, out);
+      RKMEDIA_LOGE("Flow:%s: invalid fps(%d --> %d)\n", GetFlowTag(), in, out);
       return -1;
     }
 

@@ -12,7 +12,6 @@
 #endif
 #include "rkmedia_common.h"
 
-
 #define LOG_LEVEL_ERROR 0
 #define LOG_LEVEL_WARN 1
 #define LOG_LEVEL_INFO 2

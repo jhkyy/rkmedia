@@ -42,9 +42,9 @@ static inline void init_put_bits(PutBitContext *s, uint8_t *buffer,
 }
 
 /**
-* Write up to 31 bits into a bitstream.
-* Use put_bits32 to write 32 bits.
-*/
+ * Write up to 31 bits into a bitstream.
+ * Use put_bits32 to write 32 bits.
+ */
 static inline void put_bits(PutBitContext *s, int n, unsigned int value) {
   unsigned int bit_buf;
   int bit_left;

@@ -6,8 +6,8 @@
 
 #include "buffer.h"
 #include "decoder.h"
-#include "rkaudio_utils.h"
 #include "media_type.h"
+#include "rkaudio_utils.h"
 
 #ifdef MOD_TAG
 #undef MOD_TAG
@@ -52,8 +52,8 @@ RKAUDIOAudioDecoder::RKAUDIOAudioDecoder(const char *param)
   std::list<std::pair<const std::string, std::string &>> req_list;
   req_list.push_back(std::pair<const std::string, std::string &>(
       KEY_INPUTDATATYPE, input_data_type));
-  req_list.push_back(
-      std::pair<const std::string, std::string &>(KEY_NAME, rkaudio_codec_name));
+  req_list.push_back(std::pair<const std::string, std::string &>(
+      KEY_NAME, rkaudio_codec_name));
   parse_media_param_match(param, params, req_list);
 }
 
@@ -147,8 +147,9 @@ int RKAUDIOAudioDecoder::SendInput(const std::shared_ptr<MediaBuffer> &input) {
     uint64_t data_size = input->GetValidSize();
     if (data_size > 0) {
       if (need_parser) {
-        ret = rkaudio_parser_parse2(parser, avctx, &avpkt->data, &avpkt->size, data,
-                               data_size, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
+        ret = rkaudio_parser_parse2(parser, avctx, &avpkt->data, &avpkt->size,
+                                    data, data_size, AV_NOPTS_VALUE,
+                                    AV_NOPTS_VALUE, 0);
         if (ret < 0) {
           fprintf(stderr, "Error while parsing\n");
           return -1;
@@ -241,12 +242,13 @@ std::shared_ptr<MediaBuffer> RKAUDIOAudioDecoder::FetchOutput() {
       sampleinfo.fmt = SAMPLE_FMT_FLT;
       sampleinfo.channels = avctx->channels;
       sampleinfo.nb_samples = avctx->frame_size;
-      std::shared_ptr<MediaBuffer> buffer_flt =
-      std::make_shared<MediaBuffer>(MediaBuffer::Alloc2(data_size * frame->nb_samples * avctx->channels));
+      std::shared_ptr<MediaBuffer> buffer_flt = std::make_shared<MediaBuffer>(
+          MediaBuffer::Alloc2(data_size * frame->nb_samples * avctx->channels));
 
-      buffer_size = sampleinfo.channels *
-      rkaudio_get_bytes_per_sample(SampleFmtToAVSamFmt(sampleinfo.fmt)) *
-      sampleinfo.nb_samples;
+      buffer_size =
+          sampleinfo.channels *
+          rkaudio_get_bytes_per_sample(SampleFmtToAVSamFmt(sampleinfo.fmt)) *
+          sampleinfo.nb_samples;
       conv_planar_to_package((uint8_t *)buffer_flt->GetPtr(),
                              (uint8_t **)buffer->GetPtrArrayBase(), sampleinfo);
       buffer_flt->SetValidSize(buffer_size);
@@ -258,11 +260,11 @@ std::shared_ptr<MediaBuffer> RKAUDIOAudioDecoder::FetchOutput() {
 
     // from FLT to S16
     buffer_size = avctx->channels *
-    rkaudio_get_bytes_per_sample(AV_SAMPLE_FMT_S16) *
-    avctx->frame_size;
+                  rkaudio_get_bytes_per_sample(AV_SAMPLE_FMT_S16) *
+                  avctx->frame_size;
 
     std::shared_ptr<MediaBuffer> buffer_s16 =
-    std::make_shared<MediaBuffer>(MediaBuffer::Alloc2(buffer_size));
+        std::make_shared<MediaBuffer>(MediaBuffer::Alloc2(buffer_size));
     uint8_t *po = (uint8_t *)buffer_s16->GetPtr();
     uint8_t *pi = (uint8_t *)buffer->GetPtr();
 

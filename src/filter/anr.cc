@@ -123,7 +123,7 @@ int ANRFilter::Process(std::shared_ptr<MediaBuffer> input,
 
   if (anr_on) {
     RKAP_ANR_Process(anr_handle, (short int *)input->GetPtr(),
-                (short int *)dst->GetPtr());
+                     (short int *)dst->GetPtr());
   } else {
     memcpy(dst->GetPtr(), input->GetPtr(), size);
   }

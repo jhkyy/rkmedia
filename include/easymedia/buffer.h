@@ -19,7 +19,7 @@
 #include "rknn_user.h"
 #include "sound.h"
 
-#define NUM_DATA_POINTERS         8
+#define NUM_DATA_POINTERS 8
 
 typedef int (*DeleteFun)(void *arg);
 
@@ -244,8 +244,9 @@ private:
   void CopyAttribute(MediaBuffer &src_attr);
 
   void *ptr; // buffer virtual address
-  void *ptrArray[NUM_DATA_POINTERS]; // pointer to the channel planes, like
-                                     // AV_NUM_DATA_POINTERS in libavutil/frame.h
+  void
+      *ptrArray[NUM_DATA_POINTERS]; // pointer to the channel planes, like
+                                    // AV_NUM_DATA_POINTERS in libavutil/frame.h
   size_t size;
   int fd;            // buffer fd
   size_t valid_size; // valid data size, less than above size

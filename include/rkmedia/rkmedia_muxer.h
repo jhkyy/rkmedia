@@ -143,9 +143,9 @@ typedef struct rkMUXER_CHN_ATTR_S {
   // audio stream params
   MUXER_AUDIO_STREAM_PARAM_S stAudioStreamParam;
 
-  //pre record time
+  // pre record time
   RK_U32 u32PreRecTimeSec;
-  //pre record time(s)
+  // pre record time(s)
   RK_U32 u32PreRecCacheTime;
   RK_U32 u32MuxerId;
 } MUXER_CHN_ATTR_S;
@@ -175,11 +175,12 @@ typedef struct {
 
 /* pre manual split attribute */
 typedef struct {
-  MUXER_MANUAL_SPLIT_TYPE_E enManualType;               /* maual split type */
+  MUXER_MANUAL_SPLIT_TYPE_E enManualType; /* maual split type */
   union {
-    MUXER_POST_MANUAL_SPLIT_ATTR_S stPostSplitAttr;     /* post manual split attr */
-    MUXER_PRE_MANUAL_SPLIT_ATTR_S stPreSplitAttr;       /* pre manual split attr */
-    MUXER_NORMAL_MANUAL_SPLIT_ATTR_S stNormalSplitAttr; /* normal manual split attr */
+    MUXER_POST_MANUAL_SPLIT_ATTR_S stPostSplitAttr; /* post manual split attr */
+    MUXER_PRE_MANUAL_SPLIT_ATTR_S stPreSplitAttr;   /* pre manual split attr */
+    MUXER_NORMAL_MANUAL_SPLIT_ATTR_S
+    stNormalSplitAttr; /* normal manual split attr */
   };
 } MUXER_MANUAL_SPLIT_ATTR_S;
 

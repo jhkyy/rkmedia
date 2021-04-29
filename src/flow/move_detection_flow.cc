@@ -4,9 +4,9 @@
 #include <assert.h>
 #include <chrono>             // std::chrono::seconds
 #include <condition_variable> // std::condition_variable, std::cv_status
+#include <inttypes.h>
 #include <math.h>
 #include <mutex> // std::mutex, std::unique_lock
-#include <inttypes.h>
 
 #include <move_detect/move_detection.h>
 
