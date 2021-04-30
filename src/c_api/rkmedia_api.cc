@@ -4539,6 +4539,8 @@ static RK_VOID Argb8888_To_Region_Data(VENC_CHN VeChn,
   RK_U32 ColorValue;
   RK_U32 *BitmapLineStart;
   RK_U8 *CanvasLineStart;
+  RK_U32 TransColor = 0x00000000;
+  RK_U8 TransColorId = 0;
 
   TargetWidth =
       (pstBitmap->u32Width > canvasWidth) ? canvasWidth : pstBitmap->u32Width;
@@ -4550,18 +4552,17 @@ static RK_VOID Argb8888_To_Region_Data(VENC_CHN VeChn,
                canvasHeight, TargetWidth, TargetHeight);
 
   // Initialize all pixels to transparent color
-  if ((canvasWidth > pstBitmap->u32Width) ||
-      (canvasHeight > pstBitmap->u32Height)) {
-    RK_U8 TransColorId = find_argb_color_tbl_by_order(
-        g_venc_chns[VeChn].u32ArgbColorTbl, PALETTE_TABLE_LEN, 0x00000000);
-    memset(data, TransColorId, canvasWidth * canvasHeight);
-  }
+  memset(data, TransColorId, canvasWidth * canvasHeight);
 
   for (RK_U32 i = 0; i < TargetHeight; i++) {
     BitmapLineStart = (RK_U32 *)pstBitmap->pData + i * pstBitmap->u32Width;
     CanvasLineStart = data + i * canvasWidth;
     for (RK_U32 j = 0; j < TargetWidth; j++) {
       ColorValue = *(BitmapLineStart + j);
+
+      // We can skip the transparent color
+      if (ColorValue == TransColor)
+        continue;
 
       if (g_venc_chns[VeChn].bColorDichotomyEnable) {
         *(CanvasLineStart + j) = find_argb_color_tbl_by_dichotomy(
