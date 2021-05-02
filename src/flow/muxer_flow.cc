@@ -423,24 +423,30 @@ void MuxerFlow::ManualSplit() {
 void MuxerFlow::DequePushBack(std::deque<std::shared_ptr<MediaBuffer>> *deque,
                               std::shared_ptr<MediaBuffer> buffer,
                               bool is_video) {
+  auto mb = MediaBuffer::Clone(*buffer);
+
+  if(mb == nullptr) {
+    RKMEDIA_LOGE("clone mb failed");
+    return;
+  }
+
   if (deque->size() > 2) {
     auto front = deque->front();
     auto back = deque->back();
     if (back->GetUSTimeStamp() - front->GetUSTimeStamp() >=
         pre_record_cache_time * 1000000) {
       deque->pop_front();
-      deque->push_back(buffer);
-      // deque->shrink_to_fit();
+      deque->push_back(mb);
 
       if (is_video) {
 #if PRE_RECORD_DEBUG
-        aud_buffer_size += buffer->GetValidSize() - front->GetValidSize();
-        printf("video0: buffer cnt: %d, aud_buffer_size: %d\n", deque->size(),
+        vid_buffer_size += mb->GetValidSize() - front->GetValidSize();
+        printf("video0: buffer cnt: %d, vid_buffer_size: %d\n", deque->size(),
                aud_buffer_size);
 #endif
       } else {
 #if PRE_RECORD_DEBUG
-        aud_buffer_size += buffer->GetValidSize() - front->GetValidSize();
+        aud_buffer_size += mb->GetValidSize() - front->GetValidSize();
         printf("audio0: buffer cnt: %d, aud_buffer_size: %d\n", deque->size(),
                aud_buffer_size);
 #endif
@@ -450,17 +456,17 @@ void MuxerFlow::DequePushBack(std::deque<std::shared_ptr<MediaBuffer>> *deque,
     }
   }
 
-  deque->push_back(buffer);
+  deque->push_back(mb);
 
   if (is_video) {
 #if PRE_RECORD_DEBUG
-    vid_buffer_size += buffer->GetValidSize();
+    vid_buffer_size += mb->GetValidSize();
     printf("video1: buffer cnt: %d, vid_buffer_size: %d\n", deque->size(),
            vid_buffer_size);
 #endif
   } else {
 #if PRE_RECORD_DEBUG
-    aud_buffer_size += buffer->GetValidSize();
+    aud_buffer_size += mb->GetValidSize();
     printf("audio1: buffer cnt: %d, aud_buffer_size: %d\n", deque->size(),
            aud_buffer_size);
 #endif
@@ -653,6 +659,7 @@ bool save_buffer(Flow *f, MediaBufferVector &input_vector) {
       return true;
     }
 
+    flow->real_file_duration = (vid_buffer->GetUSTimeStamp() - flow->last_ts) / 1000;
     if (flow->last_ts == 0 || vid_buffer->GetUSTimeStamp() < flow->last_ts) {
       flow->last_ts = vid_buffer->GetUSTimeStamp();
     }
