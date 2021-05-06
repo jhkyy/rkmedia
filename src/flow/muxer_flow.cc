@@ -395,9 +395,6 @@ void MuxerFlow::CheckRecordEnd(int64_t duration_us,
   if (!video_in || video_recorder == nullptr || vid_buffer == nullptr)
     return;
 
-  if (!(vid_buffer->GetUserFlag() & MediaBuffer::kIntra))
-    return;
-
   if (vid_buffer->GetUSTimeStamp() - last_ts >= duration_us * 1000000) {
     real_file_duration = (vid_buffer->GetUSTimeStamp() - last_ts) / 1000;
     video_recorder.reset();
