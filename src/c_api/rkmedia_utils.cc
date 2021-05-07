@@ -37,6 +37,8 @@ std::string ImageTypeToString(IMAGE_TYPE_E type) {
     return IMAGE_YUYV422;
   case IMAGE_TYPE_UYVY422:
     return IMAGE_UYVY422;
+  case IMAGE_TYPE_YUV444SP:
+    return IMAGE_YUV444SP;
   case IMAGE_TYPE_RGB332:
     return IMAGE_RGB332;
   case IMAGE_TYPE_RGB565:
@@ -92,6 +94,8 @@ IMAGE_TYPE_E StringToImageType(std::string type) {
     return IMAGE_TYPE_YUYV422;
   else if (type == IMAGE_UYVY422)
     return IMAGE_TYPE_UYVY422;
+  else if (type == IMAGE_YUV444SP)
+    return IMAGE_TYPE_YUV444SP;
   else if (type == IMAGE_RGB332)
     return IMAGE_TYPE_RGB332;
   else if (type == IMAGE_RGB565)

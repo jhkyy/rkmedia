@@ -34,6 +34,7 @@ enum class Type { None = -1, Audio = 0, Image, Video, Text };
 #define IMAGE_YV16 "image:yv16"
 #define IMAGE_YUYV422 "image:yuyv422"
 #define IMAGE_UYVY422 "image:uyvy422"
+#define IMAGE_YUV444SP "image:yuv444sp"
 #define IMAGE_RGB332 "image:rgb332"
 #define IMAGE_RGB565 "image:rgb565"
 #define IMAGE_BGR565 "image:bgr565"

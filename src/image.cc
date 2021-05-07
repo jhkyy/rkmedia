@@ -37,6 +37,7 @@ void GetPixFmtNumDen(const PixelFormat &fmt, int &num, int &den) {
     break;
   case PIX_FMT_RGB888:
   case PIX_FMT_BGR888:
+  case PIX_FMT_YUV444SP:
     num = 3;
     break;
   case PIX_FMT_ARGB8888:
@@ -87,7 +88,7 @@ static const struct PixFmtStringEntry {
     {PIX_FMT_BGR888, IMAGE_BGR888},     {PIX_FMT_ARGB8888, IMAGE_ARGB8888},
     {PIX_FMT_ABGR8888, IMAGE_ABGR8888}, {PIX_FMT_RGBA8888, IMAGE_RGBA8888},
     {PIX_FMT_BGRA8888, IMAGE_BGRA8888}, {PIX_FMT_FBC0, IMAGE_FBC0},
-    {PIX_FMT_FBC0, IMAGE_FBC2}};
+    {PIX_FMT_FBC0, IMAGE_FBC2},         {PIX_FMT_YUV444SP, IMAGE_YUV444SP}};
 
 PixelFormat StringToPixFmt(const char *type) {
   if (!type)

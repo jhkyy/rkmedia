@@ -24,6 +24,7 @@ MppFrameFormat ConvertToMppPixFmt(const PixelFormat &fmt) {
       [PIX_FMT_NV61] = MPP_FMT_YUV422SP_VU,
       [PIX_FMT_YUYV422] = MPP_FMT_YUV422_YUYV,
       [PIX_FMT_UYVY422] = MPP_FMT_YUV422_UYVY,
+      [PIX_FMT_YUV444SP] = MPP_FMT_YUV444SP,
       [PIX_FMT_RGB332] = (MppFrameFormat)-1,
       [PIX_FMT_RGB565] = MPP_FMT_RGB565,
       [PIX_FMT_BGR565] = MPP_FMT_BGR565,
@@ -60,6 +61,8 @@ PixelFormat ConvertToPixFmt(const MppFrameFormat &mfmt) {
     return PIX_FMT_YUYV422;
   case MPP_FMT_YUV422_UYVY:
     return PIX_FMT_UYVY422;
+  case MPP_FMT_YUV444SP:
+    return PIX_FMT_YUV444SP;
   case MPP_FMT_RGB565:
     return PIX_FMT_RGB565;
   case MPP_FMT_BGR565:
@@ -93,6 +96,7 @@ public:
     types.append(TYPENEAR(IMAGE_NV61));
     types.append(TYPENEAR(IMAGE_YUYV422));
     types.append(TYPENEAR(IMAGE_UYVY422));
+    types.append(TYPENEAR(IMAGE_YUV444SP));
     types.append(TYPENEAR(IMAGE_RGB565));
     types.append(TYPENEAR(IMAGE_BGR565));
     types.append(TYPENEAR(IMAGE_RGB888));
