@@ -909,8 +909,25 @@ FlowOutputCallback(void *handle,
   if (depth >= target_chn->buffer_depth)
     busy = true;
   g_handle_mb_mutex.unlock();
-  if (busy)
-    return;
+  if (busy) {
+    if (target_chn->buffer_depth < 2) {
+      RKMEDIA_LOGI("%s chn[mode:%d] drop current buffer!\n", __func__,
+                   target_chn->mode_id);
+      return;
+    } else {
+      RKMEDIA_LOGI("%s chn[mode:%d] drop front buffer!\n", __func__,
+                   target_chn->mode_id);
+      target_chn->buffer_list_mtx.lock();
+      if (!target_chn->buffer_list.empty()) {
+        if (target_chn->wake_fd[0] > 0)
+          RkmediaPopPipFd(target_chn->wake_fd[0]);
+        MEDIA_BUFFER mb = target_chn->buffer_list.front();
+        target_chn->buffer_list.pop_front();
+        RK_MPI_MB_ReleaseBuffer(mb);
+      }
+      target_chn->buffer_list_mtx.unlock();
+    }
+  }
 
   MB_TYPE_E mb_type = GetBufferType(target_chn);
 
