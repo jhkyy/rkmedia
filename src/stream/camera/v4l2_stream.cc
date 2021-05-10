@@ -128,6 +128,7 @@ int V4L2Stream::Open() {
     v4l2_ctx = nullptr;
     return -1;
   }
+  user_picture = nullptr;
   return 0;
 }
 
@@ -171,17 +172,19 @@ int V4L2Stream::IoCtrl(unsigned long int request, ...) {
     if (arg->data && (arg->size > 0)) {
       RKMEDIA_LOGI("V4L2: Insert user picture: ptr:%p, size:%d\n", arg->data,
                    arg->size);
-      auto mb = MediaBuffer::Alloc((size_t)arg->size,
-                                   MediaBuffer::MemType::MEM_HARD_WARE);
-      if (!mb) {
-        RKMEDIA_LOGE("V4L2: Enable user picture: no mem left!\n");
-        return -1;
+      if (user_picture == nullptr) {
+        auto mb = MediaBuffer::Alloc((size_t)arg->size,
+                                     MediaBuffer::MemType::MEM_HARD_WARE);
+        if (!mb) {
+          RKMEDIA_LOGE("V4L2: Enable user picture: no mem left!\n");
+          return -1;
+        }
+        user_picture = mb;
       }
-      mb->BeginCPUAccess(true);
-      memcpy(mb->GetPtr(), arg->data, arg->size);
-      mb->EndCPUAccess(true);
-      mb->SetValidSize(arg->size);
-      user_picture = mb;
+      user_picture->BeginCPUAccess(true);
+      memcpy(user_picture->GetPtr(), arg->data, arg->size);
+      user_picture->EndCPUAccess(true);
+      user_picture->SetValidSize(arg->size);
     } else {
       RKMEDIA_LOGI("V4L2: Reset user picture!\n");
       user_picture.reset();
