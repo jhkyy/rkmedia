@@ -59,7 +59,7 @@ MuxerFlow::MuxerFlow(const char *param)
       file_name_handle(nullptr), muxer_id(0), manual_split(false),
       manual_split_record(false), manual_split_file_duration(0),
       pre_record_time(0), pre_record_cache_time(0), vid_buffer_size(0),
-      aud_buffer_size(0) {
+      aud_buffer_size(0), is_lapse_record(false), lapse_time_stamp(0) {
   std::list<std::string> separate_list;
   std::map<std::string, std::string> params;
 
@@ -125,6 +125,12 @@ MuxerFlow::MuxerFlow(const char *param)
   if (!muxer_id_str.empty()) {
     muxer_id = std::stoi(muxer_id_str);
     RKMEDIA_LOGI("Muxer: muxer_id %d\n", muxer_id);
+  }
+
+  std::string lapse_record_str = params[KEY_LAPSE_RECORD];
+  if (!lapse_record_str.empty()) {
+    is_lapse_record = !!std::stoi(lapse_record_str);
+    RKMEDIA_LOGI("Muxer: is_lapse_record %d\n", is_lapse_record);
   }
 
   output_format = params[KEY_OUTPUTDATATYPE];
@@ -601,6 +607,12 @@ bool save_buffer(Flow *f, MediaBufferVector &input_vector) {
   else
     duration_us = flow->file_duration;
 
+  if(flow->last_ts != 0 && flow->video_in && vid_buffer && flow->is_lapse_record) {
+    int lapse_frame_interval = 1000000 / flow->vid_enc_config.vid_cfg.frame_rate; //us
+    vid_buffer->SetUSTimeStamp(flow->lapse_time_stamp + lapse_frame_interval);
+    flow->lapse_time_stamp += lapse_frame_interval;
+  }
+
   if (flow->pre_record_time > 0 &&
       flow->pre_record_cache_time >= flow->pre_record_time) {
     if (flow->audio_in && aud_buffer != nullptr)
@@ -659,6 +671,7 @@ bool save_buffer(Flow *f, MediaBufferVector &input_vector) {
     flow->real_file_duration = (vid_buffer->GetUSTimeStamp() - flow->last_ts) / 1000;
     if (flow->last_ts == 0 || vid_buffer->GetUSTimeStamp() < flow->last_ts) {
       flow->last_ts = vid_buffer->GetUSTimeStamp();
+      flow->lapse_time_stamp = flow->last_ts;
     }
   } while (0);
   return true;

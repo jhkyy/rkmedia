@@ -148,6 +148,7 @@ typedef struct rkMUXER_CHN_ATTR_S {
   // pre record time(s)
   RK_U32 u32PreRecCacheTime;
   RK_U32 u32MuxerId;
+  RK_BOOL bLapseRecord;
 } MUXER_CHN_ATTR_S;
 
 /* record manual split type enum */

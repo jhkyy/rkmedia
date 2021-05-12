@@ -6891,6 +6891,9 @@ RK_S32 RK_MPI_MUXER_EnableChn(MUXER_CHN VmChn, MUXER_CHN_ATTR_S *pstAttr) {
   RKMEDIA_LOGD("[%s]: muxer id: %d(s)\n", __func__, pstAttr->u32MuxerId);
   PARAM_STRING_APPEND_TO(MuxerParamStr, KEY_MUXER_ID, pstAttr->u32MuxerId);
 
+  RKMEDIA_LOGD("[%s]: is lapse record: %d\n", __func__, pstAttr->bLapseRecord);
+  PARAM_STRING_APPEND_TO(MuxerParamStr, KEY_LAPSE_RECORD, pstAttr->bLapseRecord);
+
   RKMEDIA_LOGD("[%s]: pre-record time: %d(s)\n", __func__,
                pstAttr->u32PreRecTimeSec);
   PARAM_STRING_APPEND_TO(MuxerParamStr, KEY_PRE_RECORD_TIME,

@@ -179,6 +179,7 @@
 #define KEY_ENABLE_STREAMING "enable_streaming"
 #define KEY_PRE_RECORD_TIME "pre_record_time"
 #define KEY_PRE_RECORD_CACHE_TIME "pre_record_cache_time"
+#define KEY_LAPSE_RECORD "lapse_record"
 
 // drm
 #define KEY_CONNECTOR_ID "connector_id"

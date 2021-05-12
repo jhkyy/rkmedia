@@ -86,6 +86,8 @@ private:
   std::deque<std::shared_ptr<MediaBuffer>> aud_cached_buffers;
   int vid_buffer_size;
   int aud_buffer_size;
+  bool is_lapse_record;
+  int64_t lapse_time_stamp;
 };
 
 class VideoRecorder {
