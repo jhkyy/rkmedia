@@ -911,11 +911,11 @@ FlowOutputCallback(void *handle,
   g_handle_mb_mutex.unlock();
   if (busy) {
     if (target_chn->buffer_depth < 2) {
-      RKMEDIA_LOGI("%s chn[mode:%d] drop current buffer!\n", __func__,
+      RKMEDIA_LOGD("%s chn[mode:%d] drop current buffer!\n", __func__,
                    target_chn->mode_id);
       return;
     } else {
-      RKMEDIA_LOGI("%s chn[mode:%d] drop front buffer!\n", __func__,
+      RKMEDIA_LOGD("%s chn[mode:%d] drop front buffer!\n", __func__,
                    target_chn->mode_id);
       target_chn->buffer_list_mtx.lock();
       if (!target_chn->buffer_list.empty()) {
