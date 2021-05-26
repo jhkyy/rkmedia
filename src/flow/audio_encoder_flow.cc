@@ -43,6 +43,7 @@ bool encode(Flow *f, MediaBufferVector &input_vector) {
   std::shared_ptr<AudioEncoder> enc = af->enc;
   std::shared_ptr<MediaBuffer> &src = input_vector[0];
   std::shared_ptr<MediaBuffer> dst;
+  std::shared_ptr<MediaBuffer> mute_mb;
   bool result = true;
   bool feed_null = false;
   size_t limit_size = af->input_size;
@@ -50,8 +51,13 @@ bool encode(Flow *f, MediaBufferVector &input_vector) {
   if (!src)
     return false;
 
-  if (af->is_mute)
-    memset((char *)src->GetPtr(), 0, src->GetValidSize());
+  if (af->is_mute) {
+    mute_mb = MediaBuffer::Clone(*src);
+    if (mute_mb) {
+      memset((char *)mute_mb->GetPtr(), 0, mute_mb->GetValidSize());
+      src = mute_mb;
+    }
+  }
 
   if (limit_size && (src->GetValidSize() > limit_size))
     RKMEDIA_LOGW("AudioEncFlow: buffer(%d) is bigger than expected(%d)\n",
