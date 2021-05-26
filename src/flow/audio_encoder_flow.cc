@@ -28,10 +28,12 @@ public:
   }
   static const char *GetFlowName() { return "audio_enc"; }
   int GetInputSize() override;
+  int Control(unsigned long int request, ...) override;
 
 private:
   std::shared_ptr<AudioEncoder> enc;
   int input_size;
+  bool is_mute;
 
   friend bool encode(Flow *f, MediaBufferVector &input_vector);
 };
@@ -47,6 +49,9 @@ bool encode(Flow *f, MediaBufferVector &input_vector) {
 
   if (!src)
     return false;
+
+  if (af->is_mute)
+    memset((char *)src->GetPtr(), 0, src->GetValidSize());
 
   if (limit_size && (src->GetValidSize() > limit_size))
     RKMEDIA_LOGW("AudioEncFlow: buffer(%d) is bigger than expected(%d)\n",
@@ -146,6 +151,8 @@ AudioEncoderFlow::AudioEncoderFlow(const char *param) {
     return;
   }
 
+  is_mute = false;
+
   auto encoder = REFLECTOR(Encoder)::Create<AudioEncoder>(
       ccodec_name, enc_param_str.c_str());
   if (!encoder) {
@@ -182,6 +189,26 @@ AudioEncoderFlow::AudioEncoderFlow(const char *param) {
 }
 
 int AudioEncoderFlow::GetInputSize() { return input_size; }
+
+int AudioEncoderFlow::Control(unsigned long int request, ...) {
+  int ret = 0;
+  va_list vl;
+  va_start(vl, request);
+
+  switch (request) {
+  case S_SET_MUTE: {
+    int mute = va_arg(vl, int);
+    is_mute = mute ? true : false;
+    RKMEDIA_LOGI("%s mute\n", is_mute ? "enable" : "disable");
+  } break;
+  default:
+    ret = -1;
+    break;
+  }
+
+  va_end(vl);
+  return ret;
+}
 
 DEFINE_FLOW_FACTORY(AudioEncoderFlow, Flow)
 // type depends on encoder

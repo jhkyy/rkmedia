@@ -5661,6 +5661,25 @@ RK_S32 RK_MPI_AENC_GetFd(AENC_CHN AencChn) {
   return rcv_fd;
 }
 
+RK_S32 RK_MPI_AENC_SetMute(AENC_CHN AencChn, RK_BOOL bEnable) {
+  if ((AencChn < 0) || (AencChn > AENC_MAX_CHN_NUM))
+    return RK_ERR_AENC_INVALID_CHNID;
+
+  g_aenc_mtx.lock();
+  if (g_aenc_chns[AencChn].status <= CHN_STATUS_READY) {
+    g_aenc_mtx.unlock();
+    return -RK_ERR_AI_NOTOPEN;
+  }
+
+  RK_S32 s32Enable = bEnable ? 1 : 0;
+  if (g_aenc_chns[AencChn].rkmedia_flow)
+    g_aenc_chns[AencChn].rkmedia_flow->Control(easymedia::S_SET_MUTE,
+                                               s32Enable);
+
+  g_aenc_mtx.unlock();
+  return RK_ERR_SYS_OK;
+}
+
 /********************************************************************
  * Algorithm::Move Detection api
  ********************************************************************/

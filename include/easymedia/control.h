@@ -87,6 +87,7 @@ enum {
   G_DESTINATION_RECT,
   S_SRC_DST_RECT,
   G_SRC_DST_RECT,
+  S_SET_MUTE,
 
   /*********************************
    *  DRM Display Ctrls define
