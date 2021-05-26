@@ -894,9 +894,10 @@ bool MPPCommonConfig::InitConfig(MPPEncoder &mpp_enc, MediaConfig &cfg) {
         enc_cfg, "h264:cabac_en",
         (vconfig.profile == 100 || vconfig.profile == 77) ? 1 : 0);
     ret |= mpp_enc_cfg_set_s32(enc_cfg, "h264:cabac_idc", 0);
+    // trans8x8 should set to 1 if profile=100
     ret |= mpp_enc_cfg_set_s32(
         enc_cfg, "h264:trans8x8",
-        (vconfig.trans_8x8 && (vconfig.profile == 100)) ? 1 : 0);
+        (vconfig.profile == 100) ? 1 : 0);
     RKMEDIA_LOGI("MPP Encoder: AVC: encode profile %d level %d\n",
                  vconfig.profile, vconfig.level);
   }
