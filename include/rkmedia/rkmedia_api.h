@@ -131,6 +131,7 @@ _CAPI RK_S32 RK_MPI_VI_RGN_SetCover(VI_PIPE ViPipe, VI_CHN ViChn,
 _CAPI RK_S32 RK_MPI_VI_RGN_SetBitMap(VI_PIPE ViPipe, VI_CHN ViChn,
                                      const OSD_REGION_INFO_S *pstRgnInfo,
                                      const BITMAP_S *pstBitmap);
+_CAPI RK_S32 RK_MPI_VI_GetStatus(VI_CHN ViChn);
 
 /********************************************************************
  * Venc api

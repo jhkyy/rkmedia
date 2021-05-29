@@ -10,6 +10,8 @@
 #include <string>
 #include <unistd.h>
 
+#include <sys/sysinfo.h>
+
 #include "encoder.h"
 #include "image.h"
 #include "key_string.h"
@@ -2183,6 +2185,32 @@ RK_S32 RK_MPI_VI_GetChnRegionLuma(VI_PIPE ViPipe, VI_CHN ViChn,
   for (RK_U32 i = 0; i < pstRegionInfo->u32RegionNum; i++)
     *(pu64LumaData + i) =
         rkmediaCalculateRegionLuma(rkmedia_mb, (pstRegionInfo->pstRegion + i));
+
+  return RK_ERR_SYS_OK;
+}
+
+RK_S32 RK_MPI_VI_GetStatus(VI_CHN ViChn)
+{
+  if (ViChn < 0 || ViChn > VI_MAX_CHN_NUM)
+    return -RK_ERR_VI_INVALID_CHNID;
+
+  g_vi_mtx.lock();
+  if (!g_vi_chns[ViChn].rkmedia_flow) {
+    g_vi_mtx.unlock();
+    return -RK_ERR_VI_NOTREADY;
+  }
+
+  int64_t recent_time, current_time;
+  struct sysinfo info;
+  sysinfo(&info);
+  current_time = info.uptime * 1000000LL;
+  g_vi_chns[ViChn].rkmedia_flow->Control(G_STREAM_RECENT_TIME, &recent_time);
+  assert(current_time - recent_time > 0);
+  if (recent_time != 0 && current_time - recent_time > 3000000) {
+    RKMEDIA_LOGW("VI timeout more than 3 seconds!\n");
+    return RK_ERR_VI_TIMEOUT;
+  }
+  g_vi_mtx.unlock();
 
   return RK_ERR_SYS_OK;
 }

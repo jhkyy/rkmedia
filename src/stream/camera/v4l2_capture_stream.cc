@@ -469,6 +469,8 @@ std::shared_ptr<MediaBuffer> V4L2CaptureStream::Read() {
     if (V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE == capture_type)
       ret_buf->SetDbgInfoSize(bytes_used_plane1);
 
+    recent_time = ret_buf->GetUSTimeStamp();
+
     /* set cover */
     param_mtx.lock();
     std::vector<ImageBorder> cur_lines = lines;

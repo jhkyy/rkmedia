@@ -64,7 +64,7 @@ V4L2MediaCtl::~V4L2MediaCtl() {}
 V4L2Stream::V4L2Stream(const char *param)
     : use_libv4l2(false), camera_id(0), fd(-1),
       capture_type(V4L2_BUF_TYPE_VIDEO_CAPTURE), plane_cnt(1),
-      enable_user_picture(0) {
+      enable_user_picture(0), recent_time(0) {
   memset(&vio, 0, sizeof(vio));
   std::map<std::string, std::string> params;
   std::list<std::pair<const std::string, std::string &>> req_list;
@@ -154,6 +154,14 @@ int V4L2Stream::IoCtrl(unsigned long int request, ...) {
   }
   case S_STREAM_OFF: {
     return v4l2_ctx->SetStarted(false) ? 0 : -1;
+  }
+  case G_STREAM_RECENT_TIME: {
+    va_start(vl, request);
+    int64_t *arg = va_arg(vl, int64_t *);
+    va_end(vl);
+    *arg = recent_time;
+
+    return 0;
   }
   case S_INSERT_USER_PICTURE: {
     va_start(vl, request);

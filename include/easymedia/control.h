@@ -108,6 +108,7 @@ enum {
   S_INSERT_USER_PICTURE,
   S_ENABLE_USER_PICTURE,
   S_DISABLE_USER_PICTURE,
+  G_STREAM_RECENT_TIME,
 
   /*********************************
    *  Alsa Ctrls define

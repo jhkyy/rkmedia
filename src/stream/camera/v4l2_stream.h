@@ -8,6 +8,7 @@
 #include "stream.h"
 
 #include <assert.h>
+#include <stdint.h>
 
 #include <mutex>
 
@@ -102,6 +103,7 @@ protected:
   ConditionLockMutex param_mtx;
   std::vector<ImageBorder> lines;
   std::map<int, OsdInfo> osds;
+  int64_t recent_time; // steam read or wirte recent timestamp
 };
 
 } // namespace easymedia
