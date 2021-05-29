@@ -395,8 +395,10 @@ private:
 
 std::shared_ptr<MediaBuffer> V4L2CaptureStream::Read() {
   const char *dev = device.c_str();
-  if (!started && v4l2_ctx->SetStarted(true))
+  if (!started && v4l2_ctx->SetStarted(true)) {
+    RKMEDIA_LOGI("Camera %d stream %d is started\n", camera_id, fd);
     started = true;
+  }
 
   struct v4l2_buffer buf;
   struct v4l2_plane planes[FMT_NUM_PLANES];
@@ -414,11 +416,6 @@ std::shared_ptr<MediaBuffer> V4L2CaptureStream::Read() {
   if (ret < 0) {
     RKMEDIA_LOGI("%s, ioctl(VIDIOC_DQBUF): %m\n", dev);
     return nullptr;
-  }
-  static int first_frame_log = false;
-  if (!first_frame_log) {
-    RKMEDIA_LOGI("Output first frame\n");
-    first_frame_log = true;
   }
   struct timeval buf_ts = buf.timestamp;
   MediaBuffer &mb = buffer_vec[buf.index];
