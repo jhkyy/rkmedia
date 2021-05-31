@@ -38,8 +38,9 @@ private:
   AVDictionary *opt;
   std::vector<AVStream *> streams;
   int nb_streams;
+  int frame_rate;
   std::vector<int64_t> first_timestamp;
-  std::vector<int64_t> pre_pts;
+  std::vector<int64_t> pre_frame_index;
 
   class RKAUDIO_AV_INIT {
   public:
@@ -304,6 +305,7 @@ bool RKAUDIOMuxer::NewMuxerStream(
   }
   assert(s->index < 64);
   stream_no = s->index;
+  frame_rate = mc.vid_cfg.frame_rate;
   RKMEDIA_LOGD("new stream index %d\n", stream_no);
   s->id = context->nb_streams - 1;
   *(s->codecpar) = *codecpar;
@@ -341,7 +343,7 @@ bool RKAUDIOMuxer::NewMuxerStream(
     streams.resize(stream_no + 1);
     streams[stream_no] = NULL;
     first_timestamp.resize(stream_no + 1, -1);
-    pre_pts.resize(stream_no + 1, 0);
+    pre_frame_index.resize(stream_no + 1, 0);
   }
   assert(!streams[stream_no]);
   streams[stream_no] = s;
@@ -431,15 +433,18 @@ RKAUDIOMuxer::Write(std::shared_ptr<MediaBuffer> data, int stream_no) {
     } else {
       diff = data->GetUSTimeStamp() - first_timestamp[stream_no];
       // (enum AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)
-      pts = av_rescale_rnd(diff, s->time_base.den, s->time_base.num * 1000000LL,
-                           AV_ROUND_UP);
-      if (pts <= pre_pts[stream_no])
-        pts = pre_pts[stream_no] + 1;
-      pre_pts[stream_no] = pts;
+      // Fix pts jitter
+      int64_t frame_index = av_rescale_rnd(diff, frame_rate, 1000000LL, AV_ROUND_NEAR_INF);
+      if (frame_index <= pre_frame_index[stream_no])
+        frame_index = pre_frame_index[stream_no] + 1;
+      pts = av_rescale_rnd(frame_index, s->time_base.den, frame_rate, AV_ROUND_UP);
+
+      if (frame_index - pre_frame_index[stream_no] > 3)
+        RKMEDIA_LOGD("Stream %d lost %lld frames!\n", stream_no, pre_frame_index[stream_no] - frame_index);
+
+      pre_frame_index[stream_no] = frame_index;
     }
     avpkt.dts = avpkt.pts = pts;
-    RKMEDIA_LOGD("[%d] pts = %" PRId64 ", num/den =%d/%d\n", stream_no, pts,
-                 s->time_base.num, s->time_base.den);
     ret = av_write_frame(context, &avpkt);
     av_packet_unref(&avpkt);
     if (ret < 0) {
