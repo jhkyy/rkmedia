@@ -1274,8 +1274,8 @@ bool MPPCommonConfig::CheckConfigChange(MPPEncoder &mpp_enc, uint32_t change,
     ret |= mpp_enc_cfg_set_s32(enc_cfg, "rc:qp_min_i", qps->qp_min_i);
     // hardware cfg. If the hardware does not support it,
     // the interface will do nothing
-    ret |= mpp_enc_cfg_set_s32(enc_cfg, "hw:qp_row", qps->row_qp_delta_i);
-    ret |= mpp_enc_cfg_set_s32(enc_cfg, "hw:qp_row_i", qps->row_qp_delta_p);
+    ret |= mpp_enc_cfg_set_s32(enc_cfg, "hw:qp_row_i", qps->row_qp_delta_i);
+    ret |= mpp_enc_cfg_set_s32(enc_cfg, "hw:qp_row", qps->row_qp_delta_p);
     if (ret) {
       RKMEDIA_LOGE("MPP Encoder: qp: cfg set s32 failed ret %d\n", ret);
       return false;
