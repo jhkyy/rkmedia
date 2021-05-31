@@ -2189,8 +2189,7 @@ RK_S32 RK_MPI_VI_GetChnRegionLuma(VI_PIPE ViPipe, VI_CHN ViChn,
   return RK_ERR_SYS_OK;
 }
 
-RK_S32 RK_MPI_VI_GetStatus(VI_CHN ViChn)
-{
+RK_S32 RK_MPI_VI_GetStatus(VI_CHN ViChn) {
   if (ViChn < 0 || ViChn > VI_MAX_CHN_NUM)
     return -RK_ERR_VI_INVALID_CHNID;
 
@@ -6956,7 +6955,8 @@ RK_S32 RK_MPI_MUXER_EnableChn(MUXER_CHN VmChn, MUXER_CHN_ATTR_S *pstAttr) {
   PARAM_STRING_APPEND_TO(MuxerParamStr, KEY_MUXER_ID, pstAttr->u32MuxerId);
 
   RKMEDIA_LOGD("[%s]: is lapse record: %d\n", __func__, pstAttr->bLapseRecord);
-  PARAM_STRING_APPEND_TO(MuxerParamStr, KEY_LAPSE_RECORD, pstAttr->bLapseRecord);
+  PARAM_STRING_APPEND_TO(MuxerParamStr, KEY_LAPSE_RECORD,
+                         pstAttr->bLapseRecord);
 
   RKMEDIA_LOGD("[%s]: pre-record time: %d(s)\n", __func__,
                pstAttr->u32PreRecTimeSec);

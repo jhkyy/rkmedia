@@ -428,7 +428,7 @@ void MuxerFlow::DequePushBack(std::deque<std::shared_ptr<MediaBuffer>> *deque,
                               bool is_video) {
   auto mb = MediaBuffer::Clone(*buffer);
 
-  if(mb == nullptr) {
+  if (mb == nullptr) {
     RKMEDIA_LOGE("clone mb failed");
     return;
   }
@@ -607,8 +607,10 @@ bool save_buffer(Flow *f, MediaBufferVector &input_vector) {
   else
     duration_us = flow->file_duration;
 
-  if(flow->last_ts != 0 && flow->video_in && vid_buffer && flow->is_lapse_record) {
-    int lapse_frame_interval = 1000000 / flow->vid_enc_config.vid_cfg.frame_rate; //us
+  if (flow->last_ts != 0 && flow->video_in && vid_buffer &&
+      flow->is_lapse_record) {
+    int lapse_frame_interval =
+        1000000 / flow->vid_enc_config.vid_cfg.frame_rate; // us
     vid_buffer->SetUSTimeStamp(flow->lapse_time_stamp + lapse_frame_interval);
     flow->lapse_time_stamp += lapse_frame_interval;
   }
@@ -668,7 +670,8 @@ bool save_buffer(Flow *f, MediaBufferVector &input_vector) {
       return true;
     }
 
-    flow->real_file_duration = (vid_buffer->GetUSTimeStamp() - flow->last_ts) / 1000;
+    flow->real_file_duration =
+        (vid_buffer->GetUSTimeStamp() - flow->last_ts) / 1000;
     if (flow->last_ts == 0 || vid_buffer->GetUSTimeStamp() < flow->last_ts) {
       flow->last_ts = vid_buffer->GetUSTimeStamp();
       flow->lapse_time_stamp = flow->last_ts;
