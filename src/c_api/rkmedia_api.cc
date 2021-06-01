@@ -2961,6 +2961,8 @@ RK_S32 RK_MPI_VENC_CreateChn(VENC_CHN VeChn, VENC_CHN_ATTR_S *stVencChnAttr) {
                          stVencChnAttr->stVencAttr.u32VirHeight);
   PARAM_STRING_APPEND_TO(enc_param, KEY_ROTATION,
                          stVencChnAttr->stVencAttr.enRotation);
+  PARAM_STRING_APPEND_TO(enc_param, KEY_FULL_RANGE,
+                         stVencChnAttr->stVencAttr.bFullRange);
   if (g_venc_chns[VeChn].venc_attr.param.stCropCfg.bEnable) {
     PARAM_STRING_APPEND_TO(
         enc_param, KEY_RECT_X,
@@ -3151,7 +3153,6 @@ RK_S32 RK_MPI_VENC_CreateChn(VENC_CHN VeChn, VENC_CHN_ATTR_S *stVencChnAttr) {
     break;
   }
 
-  PARAM_STRING_APPEND_TO(enc_param, KEY_FULL_RANGE, 0);
   // PARAM_STRING_APPEND_TO(enc_param, KEY_REF_FRM_CFG,
   //                       stVencChnAttr->stGopAttr.enGopMode);
 

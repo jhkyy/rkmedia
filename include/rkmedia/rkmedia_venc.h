@@ -186,6 +186,7 @@ typedef struct rkVENC_ATTR_S {
   RK_U32 u32PicWidth;  // RW; width of a picture to be encoded, in pixel
   RK_U32 u32PicHeight; // RW; height of a picture to be encoded, in pixel
   VENC_ROTATION_E enRotation;
+  RK_BOOL bFullRange;
   union {
     VENC_ATTR_H264_S stAttrH264e;   // attributes of H264e
     VENC_ATTR_H265_S stAttrH265e;   // attributes of H265e
