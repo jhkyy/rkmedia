@@ -164,8 +164,7 @@ typedef struct rkVENC_ATTR_H264_S {
 
 /*the attribute of h265e*/
 typedef struct rkVENC_ATTR_H265_S {
-
-  // reserved
+  RK_BOOL bScaleList;
 } VENC_ATTR_H265_S;
 
 /* the attribute of the Venc*/

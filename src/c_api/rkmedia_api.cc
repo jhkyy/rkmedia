@@ -2989,6 +2989,9 @@ RK_S32 RK_MPI_VENC_CreateChn(VENC_CHN VeChn, VENC_CHN_ATTR_S *stVencChnAttr) {
     PARAM_STRING_APPEND_TO(enc_param, KEY_PROFILE,
                            stVencChnAttr->stVencAttr.u32Profile);
     break;
+  case RK_CODEC_TYPE_H265:
+    PARAM_STRING_APPEND_TO(enc_param, KEY_SCALING_LIST,
+                           stVencChnAttr->stVencAttr.stAttrH265e.bScaleList);
   default:
     break;
   }

@@ -900,6 +900,10 @@ bool MPPCommonConfig::InitConfig(MPPEncoder &mpp_enc, MediaConfig &cfg) {
         (vconfig.profile == 100) ? 1 : 0);
     RKMEDIA_LOGI("MPP Encoder: AVC: encode profile %d level %d\n",
                  vconfig.profile, vconfig.level);
+  } else if (code_type == MPP_VIDEO_CodingHEVC) {
+    // H.265 parameter
+    if (vconfig.scaling_list)
+      ret |= mpp_enc_cfg_set_s32(enc_cfg, "h265:scaling_list", 1);
   }
 
   if (ret) {

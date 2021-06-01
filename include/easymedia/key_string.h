@@ -66,6 +66,7 @@
 #define KEY_NEED_EXTRA_MERGE "need_extra_merge"
 #define KEY_FULL_RANGE "full_range"
 #define KEY_H264_TRANS_8x8 "h264_trans_8x8"
+#define KEY_SCALING_LIST "scaling_list"
 
 #define KEY_JPEG_QFACTOR "jpeg_qfactor"
 

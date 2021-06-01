@@ -56,6 +56,8 @@ typedef struct {
   // rc_mode - rate control mode
   // "vbr", "cbr", "fixqp"
   const char *rc_mode;
+  // h265 scaling_list switch
+  int scaling_list;
 } VideoConfig;
 
 typedef struct {
