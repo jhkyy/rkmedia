@@ -138,6 +138,11 @@ typedef struct {
   unsigned int thrd_p[16];
   unsigned int row_qp_delta_i;
   unsigned int row_qp_delta_p;
+
+  // hierachy qp cfg
+  bool hier_qp_en;
+  int hier_qp_delta[4];
+  int hier_frame_num[4];
 } VideoEncoderQp;
 
 typedef enum {

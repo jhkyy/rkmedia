@@ -895,9 +895,8 @@ bool MPPCommonConfig::InitConfig(MPPEncoder &mpp_enc, MediaConfig &cfg) {
         (vconfig.profile == 100 || vconfig.profile == 77) ? 1 : 0);
     ret |= mpp_enc_cfg_set_s32(enc_cfg, "h264:cabac_idc", 0);
     // trans8x8 should set to 1 if profile=100
-    ret |= mpp_enc_cfg_set_s32(
-        enc_cfg, "h264:trans8x8",
-        (vconfig.profile == 100) ? 1 : 0);
+    ret |= mpp_enc_cfg_set_s32(enc_cfg, "h264:trans8x8",
+                               (vconfig.profile == 100) ? 1 : 0);
     RKMEDIA_LOGI("MPP Encoder: AVC: encode profile %d level %d\n",
                  vconfig.profile, vconfig.level);
   } else if (code_type == MPP_VIDEO_CodingHEVC) {
@@ -1281,6 +1280,15 @@ bool MPPCommonConfig::CheckConfigChange(MPPEncoder &mpp_enc, uint32_t change,
     // the interface will do nothing
     ret |= mpp_enc_cfg_set_s32(enc_cfg, "hw:qp_row_i", qps->row_qp_delta_i);
     ret |= mpp_enc_cfg_set_s32(enc_cfg, "hw:qp_row", qps->row_qp_delta_p);
+    // hierachy qp cfg
+    if (qps->hier_qp_en) {
+      ret |= mpp_enc_cfg_set_s32(enc_cfg, "rc:hier_qp_en", 1);
+      ret |=
+          mpp_enc_cfg_set_st(enc_cfg, "rc:hier_qp_delta", qps->hier_qp_delta);
+      ret |=
+          mpp_enc_cfg_set_st(enc_cfg, "rc:hier_frame_num", qps->hier_frame_num);
+    }
+
     if (ret) {
       RKMEDIA_LOGE("MPP Encoder: qp: cfg set s32 failed ret %d\n", ret);
       return false;

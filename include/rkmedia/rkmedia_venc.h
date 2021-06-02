@@ -13,6 +13,7 @@ extern "C" {
 typedef RK_U32 RK_FR32;
 
 #define RC_TEXTURE_THR_SIZE 16
+#define RC_HEIR_SIZE 4
 
 /* rc quality */
 typedef enum rkVENC_RC_QUALITY_E {
@@ -270,6 +271,11 @@ typedef struct rkVENC_RC_PARAM_S {
   RK_U32 u32ThrdP[RC_TEXTURE_THR_SIZE]; // [0, 255]
   RK_U32 u32RowQpDeltaI;                // [0, 10]
   RK_U32 u32RowQpDeltaP;                // [0, 10]
+
+  // hierachy qp cfg
+  RK_BOOL bEnableHierQp;
+  RK_S32 s32HierQpDelta[RC_HEIR_SIZE];
+  RK_S32 s32HierFrameNum[RC_HEIR_SIZE];
 
   RK_U32 s32FirstFrameStartQp; // RW; Start QP value of the first frame
   union {

@@ -3848,6 +3848,12 @@ RK_S32 RK_MPI_VENC_SetRcParam(VENC_CHN VeChn,
   stVencQp.row_qp_delta_i = pstRcParam->u32RowQpDeltaI;
   stVencQp.row_qp_delta_p = pstRcParam->u32RowQpDeltaP;
 
+  stVencQp.hier_qp_en = (bool)pstRcParam->bEnableHierQp;
+  memcpy(stVencQp.hier_qp_delta, pstRcParam->s32HierQpDelta,
+         RC_HEIR_SIZE * sizeof(RK_S32));
+  memcpy(stVencQp.hier_frame_num, pstRcParam->s32HierFrameNum,
+         RC_HEIR_SIZE * sizeof(RK_S32));
+
   stVencQp.qp_init = pstRcParam->s32FirstFrameStartQp;
   switch (g_venc_chns[VeChn].venc_attr.attr.stVencAttr.enType) {
   case RK_CODEC_TYPE_H264:
