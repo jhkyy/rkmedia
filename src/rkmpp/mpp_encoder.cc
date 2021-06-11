@@ -517,17 +517,17 @@ int MPPEncoder::Process(const std::shared_ptr<MediaBuffer> &input,
     free(buf);
   }
 
-#ifdef RGA_OSD_ENABLE
-  if (rga_osd_cnt > 0)
-    RgaOsdRegionProcess(hw_buffer);
-#endif
-
   if (thumbnail_type[1] == THUMBNAIL_TYPE_APP2) {
     mpf_len[1] = thumbnail_width[1] * thumbnail_height[1] * 2;
     mpf[1] = (char *)malloc(mpf_len[1]);
     PrepareThumbnail(input, 1, mpf[1], &mpf_len[1]);
     image_cnt++;
   }
+
+#ifdef RGA_OSD_ENABLE
+  if (rga_osd_cnt > 0)
+    RgaOsdRegionProcess(hw_buffer);
+#endif
 
   if (thumbnail_type[2] == THUMBNAIL_TYPE_APP2) {
     mpf_len[2] = thumbnail_width[2] * thumbnail_height[2] * 2;
